@@ -1,0 +1,31 @@
+{
+  "name": "app-builder",
+  "version": "1.0.0",
+  "description": "simple generator / promise based middleware",
+  "main": "index.js",
+  "scripts": {
+    "prepublish": "npm run compile",
+    "compile": "babel index.src.js --out-file index.js --optional bluebirdCoroutines",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calebboyd/app-builder.git"
+  },
+  "keywords": [
+    "middleware",
+    "pipeline"
+  ],
+  "author": "Caleb Boyd (https://github.com/calebboyd)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/calebboyd/app-builder/issues"
+  },
+  "homepage": "https://github.com/calebboyd/app-builder",
+  "dependencies": {
+    "bluebird": "^2.9.21"
+  },
+  "devDependencies": {
+    "babel": "^4.7.16"
+  }
+}
