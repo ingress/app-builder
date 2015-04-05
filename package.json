@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run compile",
-    "compile": "babel index.src.js --out-file index.js --optional bluebirdCoroutines",
-    "test": "npm test"
+    "compile": "babel index.src.js --out-file index.js",
+    "test": "mocha test.js --compilers js:babel/register"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/calebboyd/app-builder",
   "dependencies": {
-    "bluebird": "^2.9.21"
+    "bluebird": "^2.9.24"
   },
   "devDependencies": {
-    "babel": "^4.7.16"
+    "babel": "^5.0.8",
+    "chai": "^2.2.0",
+    "mocha": "^2.2.1"
   }
 }

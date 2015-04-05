@@ -1,67 +1,61 @@
-import Promise from 'bluebird';
-
-const noop = () => Promise.resolve();
+import Promise from 'bluebird'
 
 export default class AppBuilder {
 
   static create () {
-    return new AppBuilder;
+    return new AppBuilder
   }
 
   constructor () {
-    this.middleware = [];
-    this._app = null;
+    this.middleware = []
   }
 
-  /**
-   * Retrieve a function that will invoke the async pipeline application.
-   */
-  get app () {
-    return this._app || (this._app = this.build(this.middleware));
-  }
-  /**
-   * Install a middleware.
-   *
-   * The middleware functions share a context (this) unless bound,
-   * and one argument, The single argument has a `.next` property
-   * which represents the next function in the pipeline.
-   *
-   *   // No-op middleware example:
-   *     async (pipeline) => {
-   *       await pipeline.next();
-   *     }
-   *
-   * Return values from a middleware are recorded in a `.results`
-   * array property of the passed argument, at their respective index.
-   *
-   * @param mw {Function}
-   * @returns {AppBuilder}
-   */
   use (mw) {
     if ('function' !== typeof mw)
-      throw new TypeError('Usage Error: mw must be a function');
-    this.middleware.push(mw);
-    return this;
+      throw new TypeError('Usage Error: mw must be a function')
+    this.middleware.push(mw)
+    return this
   }
 
-  /**
-   * @api private
-   * @returns {Function}
-   */
-  build () {
-    let mw = this.middleware;
-    let l = mw.length;
-    mw = mw.map((ware, i) => {
-      return function (env) {
-        env.next = () => (mw[i + 1] || noop).call(this, env);
-        return env.results[i] = Promise.resolve(ware.call(this, env));
+  static wrap (mw) {
+    return mw = mw.map((ware, i) => {
+      return function (env, results, next) {
+        env.next = () => (mw[i + 1] || next || noop).call(this, env, results, next)
+        return results[i] = Promise.resolve(ware.call(this, env))
       }
     })
-    return async function (env) {
-      env = env || {};
-      env.results = new Array(l);
-      await Promise.resolve(mw[0].call(this, env));
-      return Promise.all(env.results);
-    }
   }
+
+  build () {
+    if (!this.middleware.length)
+      throw new Error('Usage error: must have at least one middleware')
+    let mw = AppBuilder.wrap(this.middleware)
+    async function func (env) {
+      env = env || {}
+      let results = new Array(mw.length)
+      await mw[0].call(this, env, results, func.next)
+      return Promise.all(results)
+    }
+    func.builder = this
+    func.concat = concat;
+    return func;
+  }
+}
+
+function noop () {
+  return Promise.resolve()
+}
+
+function concat (func) {
+  let current = this.builder.build();
+  let initial = current;
+  current.next = this.next;
+  while (current && current.next) {
+    current = current.next;
+  }
+  current.next = function (env, results) {
+    return func.call(this, env)
+      .then(res => results.push.apply(results, res))
+  };
+  return initial;
 }
