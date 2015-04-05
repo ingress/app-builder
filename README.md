@@ -3,26 +3,42 @@
 Create a promise based middleware-like application. 
 
 ```javascript
-import AppBuilder from 'app-builder';
+import AppBuilder from 'app-builder'
 
-let somethingAsync = () => new Promise(res => setTimeout(res, 500));
+let somethingAsync = () => new Promise(res => setTimeout(res, 500))
 
-let builder = AppBuilder.create();
+let builder = AppBuilder.create()
 
 builder.use(async (pipeline) => {
   // 1
-  await somethingAsync();
+  await somethingAsync()
   // 2
-  await pipeline.next();
+  pipeline.state++
+  await pipeline.next()
   // 5
 })
 .use(async (pipeline) => {
   // 3
-  await pipeline.next();
-  await somethingAsync();
+  pipeline.state++
+  await pipeline.next()  
+  await somethingAsync()
   // 4
 });
 
-let appFunc = builder.app
-appFunc.call({context:"I'm this"}, {state: 1});
+let app = builder.build()
+let env = {state: 0}
+  
+let builder2 = AppBuilder.create()
+//compose different apps
+let app2and1 = builder2.use(async (pipeline) => {
+  //first
+  env.state++
+  await pipeline.next() //steps 1 2 3 4 5 
+  //last
+})
+.build()
+.concat(app)
+
+app2and1(env)
+  .then(() => console.log(env.state)) //3  
 ```
