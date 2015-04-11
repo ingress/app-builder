@@ -1,7 +1,5 @@
 'use strict';
 
-var _bluebird2 = require('bluebird');
-
 var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -12,7 +10,9 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _Promise = _interopRequireWildcard(_bluebird2);
+var _Promise = require('bluebird');
+
+var _Promise2 = _interopRequireWildcard(_Promise);
 
 var AppBuilder = (function () {
   function AppBuilder() {
@@ -24,23 +24,22 @@ var AppBuilder = (function () {
   _createClass(AppBuilder, [{
     key: 'use',
     value: function use(mw) {
-      if ('function' !== typeof mw) throw new TypeError('Usage Error: mw must be a function');
+      if ('function' !== typeof mw) throw new TypeError('Usage Error: middleware must be a function');
       this.middleware.push(mw);
       return this;
     }
   }, {
     key: 'build',
     value: function build() {
-      var func = _bluebird2.coroutine(function* (env) {
-        env = env || {};
-        var results = new Array(mw.length);
-        yield mw[0].call(this, env, results, func.next);
-        return _Promise['default'].all(results);
-      });
-
       if (!this.middleware.length) throw new Error('Usage error: must have at least one middleware');
-      var mw = AppBuilder.wrap(this.middleware);
-
+      var start = AppBuilder.wrap(this.middleware)[0];
+      function func(env) {
+        env = env || {};
+        var results = [];
+        return start.call(this, env, results, func.next).then(function () {
+          return _Promise2['default'].all(results);
+        });
+      }
       func.builder = this;
       func.concat = concat;
       return func;
@@ -60,7 +59,7 @@ var AppBuilder = (function () {
           env.next = function () {
             return (mw[i + 1] || next || noop).call(_this, env, results, next);
           };
-          return results[i] = _Promise['default'].resolve(ware.call(this, env));
+          return results[i] = _Promise2['default'].resolve(ware.call(this, env));
         };
       });
     }
@@ -72,7 +71,7 @@ var AppBuilder = (function () {
 exports['default'] = AppBuilder;
 
 function noop() {
-  return _Promise['default'].resolve();
+  return _Promise2['default'].resolve();
 }
 
 function concat(func) {

@@ -12,7 +12,7 @@ export default class AppBuilder {
 
   use (mw) {
     if ('function' !== typeof mw)
-      throw new TypeError('Usage Error: mw must be a function')
+      throw new TypeError('Usage Error: middleware must be a function')
     this.middleware.push(mw)
     return this
   }
@@ -29,12 +29,12 @@ export default class AppBuilder {
   build () {
     if (!this.middleware.length)
       throw new Error('Usage error: must have at least one middleware')
-    let mw = AppBuilder.wrap(this.middleware)
-    async function func (env) {
+    let start = AppBuilder.wrap(this.middleware)[0]
+    function func (env) {
       env = env || {}
-      let results = new Array(mw.length)
-      await mw[0].call(this, env, results, func.next)
-      return Promise.all(results)
+      let results = []
+      return start.call(this, env, results, func.next)
+        .then(() => Promise.all(results))
     }
     func.builder = this
     func.concat = concat;
