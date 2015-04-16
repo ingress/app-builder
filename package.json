@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "simple generator / promise based middleware",
   "main": "index.js",
   "scripts": {
@@ -22,9 +22,7 @@
     "url": "https://github.com/calebboyd/app-builder/issues"
   },
   "homepage": "https://github.com/calebboyd/app-builder",
-  "dependencies": {
-    "bluebird": "^2.9.24"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel": "^5.0.8",
     "chai": "^2.2.0",

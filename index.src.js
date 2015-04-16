@@ -1,5 +1,3 @@
-import Promise from 'bluebird'
-
 export default class AppBuilder {
 
   static create () {
@@ -37,16 +35,20 @@ export default class AppBuilder {
         .then(() => Promise.all(results))
     }
     func.builder = this
-    func.concat = concat;
+    func.concat = doConcat;
     return func;
   }
+}
+
+export function concat (a, b) {
+  return doConcat.call(a, b);
 }
 
 function noop () {
   return Promise.resolve()
 }
 
-function concat (func) {
+function doConcat (func) {
   let current = this.builder.build();
   let initial = current;
   current.next = this.next;

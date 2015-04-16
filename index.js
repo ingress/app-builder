@@ -1,7 +1,5 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9,10 +7,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-
-var _Promise = require('bluebird');
-
-var _Promise2 = _interopRequireWildcard(_Promise);
+exports.concat = concat;
 
 var AppBuilder = (function () {
   function AppBuilder() {
@@ -37,11 +32,11 @@ var AppBuilder = (function () {
         env = env || {};
         var results = [];
         return start.call(this, env, results, func.next).then(function () {
-          return _Promise2['default'].all(results);
+          return Promise.all(results);
         });
       }
       func.builder = this;
-      func.concat = concat;
+      func.concat = doConcat;
       return func;
     }
   }], [{
@@ -59,7 +54,7 @@ var AppBuilder = (function () {
           env.next = function () {
             return (mw[i + 1] || next || noop).call(_this, env, results, next);
           };
-          return results[i] = _Promise2['default'].resolve(ware.call(this, env));
+          return results[i] = Promise.resolve(ware.call(this, env));
         };
       });
     }
@@ -70,11 +65,15 @@ var AppBuilder = (function () {
 
 exports['default'] = AppBuilder;
 
-function noop() {
-  return _Promise2['default'].resolve();
+function concat(a, b) {
+  return doConcat.call(a, b);
 }
 
-function concat(func) {
+function noop() {
+  return Promise.resolve();
+}
+
+function doConcat(func) {
   var current = this.builder.build();
   var initial = current;
   current.next = this.next;
@@ -88,4 +87,3 @@ function concat(func) {
   };
   return initial;
 }
-module.exports = exports['default'];
