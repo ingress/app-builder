@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import AppBuilder from '../index.src'
+import appBuilder, {AppBuilder} from '../index.src'
 
 function createSpy () {
   let spy = () => spy.count++
@@ -17,9 +17,9 @@ describe('app-builder', () => {
   })
 
 
-  describe('AppBuilder.create', () =>
+  describe('appBuilder default export', () =>
     it('gets an instance', () =>
-      expect(AppBuilder.create()).to.be.an.instanceOf(AppBuilder)))
+      expect(appBuilder()).to.be.an.instanceOf(AppBuilder)))
 
   describe('use', () => {
     it('adds middleware to the builder', () => {
@@ -54,14 +54,14 @@ describe('app-builder', () => {
     })
 
     it('composed with .concat', async () => {
-      let appBuilder = AppBuilder.create()
+      let anotherBuilder = appBuilder();
       let res = ''
       await builder.use( async (env) => {
         res += 1
         await env.next()
         res += 4
       }).build().concat(
-      appBuilder.use(async (env) => {
+        anotherBuilder.use(async (env) => {
         res += 2
         await env.next()
         res += 3

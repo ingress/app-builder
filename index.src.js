@@ -1,8 +1,8 @@
-export default class AppBuilder {
+export default function () {
+  return new AppBuilder;
+}
 
-  static create () {
-    return new AppBuilder
-  }
+export class AppBuilder {
 
   constructor () {
     this.middleware = []
