@@ -9,6 +9,10 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.concat = concat;
 
+exports['default'] = function () {
+  return new AppBuilder();
+};
+
 var AppBuilder = (function () {
   function AppBuilder() {
     _classCallCheck(this, AppBuilder);
@@ -40,11 +44,6 @@ var AppBuilder = (function () {
       return func;
     }
   }], [{
-    key: 'create',
-    value: function create() {
-      return new AppBuilder();
-    }
-  }, {
     key: 'wrap',
     value: function wrap(mw) {
       return mw = mw.map(function (ware, i) {
@@ -63,7 +62,7 @@ var AppBuilder = (function () {
   return AppBuilder;
 })();
 
-exports['default'] = AppBuilder;
+exports.AppBuilder = AppBuilder;
 
 function concat(a, b) {
   return doConcat.call(a, b);

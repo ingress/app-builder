@@ -1,11 +1,10 @@
 {
   "name": "app-builder",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "simple generator / promise based middleware",
   "main": "index.js",
   "scripts": {
-    "prepublish": "npm run compile",
-    "compile": "babel index.src.js --out-file index.js",
+    "prepublish": "babel index.src.js --out-file index.js",
     "test": "mocha --compilers js:babel/register"
   },
   "repository": {
