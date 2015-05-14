@@ -1,21 +1,12 @@
 import {expect} from 'chai'
 import appBuilder, {AppBuilder} from '../index.src'
 
-function createSpy () {
-  let spy = () => spy.count++
-  spy.count = 0
-  return spy
-}
-
 describe('app-builder', () => {
   let builder, spy1, spy2
 
   beforeEach(() => {
     builder = new AppBuilder
-    spy1 = createSpy()
-    spy2 = createSpy()
   })
-
 
   describe('appBuilder default export', () =>
     it('gets an instance', () =>
@@ -42,7 +33,7 @@ describe('app-builder', () => {
     })
   })
 
-  describe('AppBuilder.build() function', () => {
+  describe('AppFunc function', () => {
     it('short circuit', async () => {
       let m = {count: 0}
       await builder.use(async (x) => {
@@ -62,9 +53,9 @@ describe('app-builder', () => {
         res += 4
       }).build().concat(
         anotherBuilder.use(async (env) => {
-        res += 2
-        await env.next()
-        res += 3
+          res += 2
+          await env.next()
+          res += 3
       }).build())()
       expect(res).to.equal('1234')
     })

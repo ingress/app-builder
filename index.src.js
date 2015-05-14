@@ -1,5 +1,42 @@
-export default function () {
-  return new AppBuilder;
+function createAppFunc (start) {
+  function appFunc (env) {
+    env = env || {}
+    const results = []
+    return start.call(this, env, results, appFunc.next)
+        .then(() => Promise.all(results))
+  }
+}
+
+function isAppFunc (x) {
+  return typeof x === 'function'
+    && typeof x.concat === 'function'
+    && x.builder
+    && typeof x.builder.build === 'function'
+}
+
+function noop () {
+  return Promise.resolve()
+}
+
+export function concat (a, b) {
+  if (isAppFunc(this)) {
+    b = a
+    a = this
+  }
+  if (!isAppFunc(a) || !isAppFunc(b)) {
+    throw new Error("Usage Error: argument must be an AppFunc")
+  }
+  let current = a.builder.build()
+  const initial = current
+  current.next = a.next
+  while (current && current.next) {
+    current = current.next
+  }
+  current.next = function (env, results) {
+    return b.call(this, env)
+        .then(res => results.push.apply(results, res))
+  }
+  return initial
 }
 
 export class AppBuilder {
@@ -27,37 +64,14 @@ export class AppBuilder {
   build () {
     if (!this.middleware.length)
       throw new Error('Usage error: must have at least one middleware')
-    let start = AppBuilder.wrap(this.middleware)[0]
-    function func (env) {
-      env = env || {}
-      let results = []
-      return start.call(this, env, results, func.next)
-        .then(() => Promise.all(results))
-    }
-    func.builder = this
-    func.concat = doConcat;
-    return func;
+    const start = AppBuilder.wrap(this.middleware)[0]
+    const appFunc = createAppFunc(start)
+    appFunc.builder = this
+    appFunc.concat = concat
+    return appFunc
   }
 }
 
-export function concat (a, b) {
-  return doConcat.call(a, b);
-}
-
-function noop () {
-  return Promise.resolve()
-}
-
-function doConcat (func) {
-  let current = this.builder.build();
-  let initial = current;
-  current.next = this.next;
-  while (current && current.next) {
-    current = current.next;
-  }
-  current.next = function (env, results) {
-    return func.call(this, env)
-      .then(res => results.push.apply(results, res))
-  };
-  return initial;
+export default function () {
+  return new AppBuilder
 }
