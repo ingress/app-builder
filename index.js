@@ -11,13 +11,13 @@ exports.concat = concat;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function createAppFunc(start) {
-  function appFunc(env) {
+  return function appFunc(env) {
     env = env || {};
     var results = [];
     return start.call(this, env, results, appFunc.next).then(function () {
       return Promise.all(results);
     });
-  }
+  };
 }
 
 function isAppFunc(x) {

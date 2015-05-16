@@ -1,5 +1,5 @@
 function createAppFunc (start) {
-  function appFunc (env) {
+  return function appFunc (env) {
     env = env || {}
     const results = []
     return start.call(this, env, results, appFunc.next)
