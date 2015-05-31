@@ -1,5 +1,7 @@
 # app-builder
 
+[![Join the chat at https://gitter.im/calebboyd/app-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/calebboyd/app-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Create a promise based middleware pipeline.
 
 `npm install app-builder`
