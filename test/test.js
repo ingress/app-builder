@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import appBuilder, {AppBuilder} from '../index.src'
+import appBuilder, { AppBuilder } from '../index'
 
 describe('app-builder', () => {
   let builder, spy1, spy2
@@ -44,30 +44,38 @@ describe('app-builder', () => {
       expect(m.count).to.equal(1)
     })
 
-    it('composed with .concat', async () => {
-      let anotherBuilder = appBuilder();
-      let res = ''
-      await builder.use( async (env) => {
-        res += 1
-        await env.next()
-        res += 4
-      }).build().concat(
-        anotherBuilder.use(async (env) => {
-          res += 2
-          await env.next()
-          res += 3
-      }).build())()
-      expect(res).to.equal('1234')
+    it('works', async () => {
+      let str = ''
+      await builder.use(async (x) => {
+        str += 1
+        await x.next()
+        str += 3
+      }).use(async (x) => {
+        str += 2
+      }).build()({})
+      expect(str).to.equal('123')
     })
 
-    it('return values', async () => {
-      expect(await builder.use( async (env) => {
-        await env.next()
-        return 42
-      }).use(async (env) => {
-        await env.next()
-        return 24
-      }).build()()).to.eql([42,24])
+    it(`sequential executions don't overwrite contexts`, async () => {
+      let count = 0;
+      let firstArgThrough = false
+      const func = builder.use(async (x) => {
+        count++;
+        await new Promise(setTimeout)
+        await x.next()
+      }).use(async (x) => {
+        if (x.num === 1) {
+          firstArgThrough = true
+        }
+        expect(count).to.equal(2)
+      }).build()
+
+      let res = func({num:1})
+      await func({num:2})
+      await res
+      expect(firstArgThrough).to.be.true
     })
+
+
   })
 })

@@ -6,48 +6,43 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-exports.concat = concat;
+exports['default'] = factory;
+exports.compose = compose;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function createAppFunc(start) {
-  return function appFunc(env) {
-    env = env || {};
-    var results = [];
-    return start.call(this, env, results, appFunc.next).then(function () {
-      return Promise.all(results);
-    });
-  };
+function factory() {
+  return new AppBuilder();
 }
 
-function isAppFunc(x) {
-  return typeof x === 'function' && typeof x.concat === 'function' && x.builder && typeof x.builder.build === 'function';
-}
-
-function noop() {
+var noop = function noop() {
   return Promise.resolve();
-}
+};
 
-function concat(a, b) {
-  if (isAppFunc(this)) {
-    b = a;
-    a = this;
-  }
-  if (!isAppFunc(a) || !isAppFunc(b)) {
-    throw new Error('Usage Error: argument must be an AppFunc');
-  }
-  var current = a.builder.build();
-  var initial = current;
-  current.next = a.next;
-  while (current && current.next) {
-    current = current.next;
-  }
-  current.next = function (env, results) {
-    return b.call(this, env).then(function (res) {
-      return results.push.apply(results, res);
-    });
-  };
-  return initial;
+/**
+ * Create a function to invoke all passed middleware functions
+ * with a single argument and context
+ * @param {...Array<Function>} middleware, groups of middleware functions
+ * @return {Function} start the flattened middleware pipeline
+ */
+
+function compose() {
+  var _ref;
+
+  var ctx = undefined,
+      env = undefined;
+  return (_ref = []).concat.apply(_ref, arguments) //flatten arguments    
+  .reduceRight(function (next, mw, i) {
+    return function (environment) {
+      if (i === 0) {
+        // capture context and environment when reduced method is invoked.
+        ctx = this;
+        env = environment;
+      }
+      return Promise.resolve(mw.call(ctx, env, env.next = next));
+    };
+    // seed with noop
+  }, noop);
 }
 
 var AppBuilder = (function () {
@@ -58,35 +53,26 @@ var AppBuilder = (function () {
   }
 
   _createClass(AppBuilder, [{
+    key: 'build',
+    value: function build() {
+      if (!this.middleware.length) {
+        throw new Error('Usage error: must have at least one middleware');
+      }
+      return AppBuilder.compose(this.middleware);
+    }
+  }, {
     key: 'use',
     value: function use(mw) {
-      if ('function' !== typeof mw) throw new TypeError('Usage Error: middleware must be a function');
+      if ('function' !== typeof mw) {
+        throw new TypeError('Usage Error: middleware must be a function');
+      }
       this.middleware.push(mw);
       return this;
     }
-  }, {
-    key: 'build',
-    value: function build() {
-      if (!this.middleware.length) throw new Error('Usage error: must have at least one middleware');
-      var start = AppBuilder.wrap(this.middleware)[0];
-      var appFunc = createAppFunc(start);
-      appFunc.builder = this;
-      appFunc.concat = concat;
-      return appFunc;
-    }
   }], [{
-    key: 'wrap',
-    value: function wrap(mw) {
-      return mw = mw.map(function (ware, i) {
-        return function (env, results, next) {
-          var _this = this;
-
-          env.next = function () {
-            return (mw[i + 1] || next || noop).call(_this, env, results, next);
-          };
-          return results[i] = Promise.resolve(ware.call(this, env));
-        };
-      });
+    key: 'compose',
+    get: function get() {
+      return compose;
     }
   }]);
 
@@ -94,7 +80,4 @@ var AppBuilder = (function () {
 })();
 
 exports.AppBuilder = AppBuilder;
-
-exports['default'] = function () {
-  return new AppBuilder();
-};
+//close each mw over the context, environment and the next function in the pipeline
