@@ -29,20 +29,17 @@ var noop = function noop() {
 function compose() {
   var _ref;
 
-  var ctx = undefined,
-      env = undefined;
-  return (_ref = []).concat.apply(_ref, arguments) //flatten arguments    
-  .reduceRight(function (next, mw, i) {
-    return function (environment) {
-      if (i === 0) {
-        // capture context and environment when reduced method is invoked.
-        ctx = this;
-        env = environment;
-      }
-      return Promise.resolve(mw.call(ctx, env, env.next = next));
+  return (_ref = []).concat.apply(_ref, arguments) //flatten arguments
+  .reduceRight(function (next, mw) {
+    return function (env) {
+      var _this = this;
+
+      env.next = function () {
+        return next.call(_this, env);
+      };
+      return Promise.resolve(mw.call(this, env, env.next));
     };
-    // seed with noop
-  }, noop);
+  }, noop); // seed with noop
 }
 
 var AppBuilder = (function () {
@@ -58,7 +55,7 @@ var AppBuilder = (function () {
       if (!this.middleware.length) {
         throw new Error('Usage error: must have at least one middleware');
       }
-      return AppBuilder.compose(this.middleware);
+      return compose(this.middleware);
     }
   }, {
     key: 'use',
@@ -68,11 +65,6 @@ var AppBuilder = (function () {
       }
       this.middleware.push(mw);
       return this;
-    }
-  }], [{
-    key: 'compose',
-    get: function get() {
-      return compose;
     }
   }]);
 

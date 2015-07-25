@@ -11,23 +11,16 @@ const noop = () => Promise.resolve()
  * @return {Function} start the flattened middleware pipeline
  */
 export function compose (...middleware: Array<Function>): Function {
-  let ctx, env
-  return [].concat(...middleware)    //flatten arguments     
-    .reduceRight((next, mw, i) => {  //close each mw over the context, environment and the next function in the pipeline
-      return function (environment): Promise<any> {
-        if (i === 0) { // capture context and environment when reduced method is invoked.
-          ctx = this
-          env = environment
-        }
-        return Promise.resolve(mw.call(ctx, env, env.next = next))
+  return [].concat(...middleware) //flatten arguments
+    .reduceRight((next, mw) => {  //close each mw over the context, environment and the next function in the pipeline
+      return function (env): Promise<any> {
+        env.next = () => next.call(this, env)
+        return Promise.resolve(mw.call(this, env, env.next))
       }
-      // seed with noop
-    }, noop)
+    }, noop) // seed with noop
 }
 
 export class AppBuilder {
-
-  static get compose() { return compose }
 
   middleware: Array<Function> = []
 
@@ -35,7 +28,7 @@ export class AppBuilder {
     if (!this.middleware.length) {
       throw new Error('Usage error: must have at least one middleware')
     }
-    return AppBuilder.compose(this.middleware)
+    return compose(this.middleware)
   }
 
   use (mw: Function) {
