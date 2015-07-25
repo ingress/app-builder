@@ -15,9 +15,9 @@ function factory() {
   return new AppBuilder();
 }
 
-var noop = function noop() {
+function noop() {
   return Promise.resolve();
-};
+}
 
 /**
  * Create a function to invoke all passed middleware functions

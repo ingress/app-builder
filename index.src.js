@@ -2,7 +2,7 @@ export default function factory () {
   return new AppBuilder
 }
 
-const noop = () => Promise.resolve()
+function noop () { return Promise.resolve() }
 
 /**
  * Create a function to invoke all passed middleware functions
