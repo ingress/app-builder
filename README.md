@@ -7,34 +7,34 @@ Create a promise based middleware pipeline.
 ## Example 
 
 ```javascript
-import appBuilder from 'app-builder'
+import { AppBuilder } from 'app-builder'
 
-const builder = appBuilder()
-let str = ''
+const builder = new AppBuilder()
 
 builder
-.use(async (env) => {
-  str += 1  
-  await env.next()
-  str += 4  
-})
-.use(async (env) => {  
-  str += 2
-  await env.next()
-  str += 3    
-});
+  .use(async function (env, next) {
+    env.value += 1
+    await next()
+    env.value += 4
+  })
+  .use(async function (env) {
+    env.value += 2
+    await env.next()
+    env.value += 3
+  });
 
 const app = builder.build()
-app().then(() => console.log(str)) //'1234'  
+const context = { value: '' }
+app(context).then(() => console.log(context.value)) //'1234'
 
 ```
 
 ### AppBuilder#use(Function) : AppBuilder 
 
-Adds a pipeline function to the builder. The function accepts one parameter which is provided
-when the appFunc is invoked. The parameters `next` property is set internally and must be
-invoked to continue the pipeline. If the function returns a promise the pipeline
-will continue when it has been resolved.
+Adds a pipeline function to the builder. The function can accept two arguments,
+`environment` and a `next` method The environment's `next` property is also set to the
+`next` method which must be invoked to continue the pipeline. If the middleware function returns
+a promise the pipeline will end only after all returned promises have been resolved.
 
 ### AppBuilder#build : AppFunc
 

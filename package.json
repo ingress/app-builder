@@ -4,7 +4,7 @@
   "description": "simple promise based middleware",
   "main": "index.js",
   "scripts": {
-    "prepublish": "babel index.src.js --out-file index.js --stage 0",
+    "prepublish": "babel index.src.js --out-file index.js --stage 1",
     "test": "mocha --compilers js:babel/register"
   },
   "files": [
@@ -31,8 +31,9 @@
   "homepage": "https://github.com/calebboyd/app-builder",
   "dependencies": {},
   "devDependencies": {
-    "babel": "^5.8.3",
+    "babel": "^5.8.23",
+    "bluebird": "^2.10.0",
     "chai": "^3.2.0",
-    "mocha": "^2.2.5"
+    "mocha": "^2.3.2"
   }
 }

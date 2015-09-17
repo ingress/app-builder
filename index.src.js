@@ -1,7 +1,3 @@
-export default function factory () {
-  return new AppBuilder
-}
-
 function noop () { return Promise.resolve() }
 
 /**
@@ -38,4 +34,8 @@ export class AppBuilder {
     this.middleware.push(mw)
     return this
   }
+}
+
+export default function factory () {
+  return new AppBuilder
 }
