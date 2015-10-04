@@ -34,15 +34,10 @@ function tryInvokeMiddleware(context, middleware, next) {
 
 function middlewareReducer(composed, mw) {
   return function (context, nextFn) {
-    var id = arguments.length <= 2 || arguments[2] === undefined ? function () {
-      return context;
-    } : arguments[2];
-    return (function () {
-      var next = function next() {
-        return throwIfCalled(next) && composed(context, nextFn, id);
-      };
-      return tryInvokeMiddleware(context, mw, next).then(id);
-    })();
+    var next = function next() {
+      return throwIfCalled(next) && composed(context, nextFn);
+    };
+    return tryInvokeMiddleware(context, mw, next);
   };
 }
 

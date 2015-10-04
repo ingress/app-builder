@@ -44,14 +44,6 @@ describe('app-builder', () => {
       expect(m.count).to.equal(1)
     })
 
-    it('is an identity function', async () => {
-      const input = 'hey',
-        output = await compose([async (x, next) => {
-          await next()
-        }])(input)
-      expect(output).to.equal(input)
-    })
-
     it('works', async () => {
       let str = ''
       await builder.use(async (x, next) => {
