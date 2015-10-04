@@ -1,8 +1,8 @@
-import {expect} from 'chai'
-import appBuilder, { AppBuilder } from '../index'
+import { expect } from 'chai'
+import appBuilder, { compose, AppBuilder } from '../index.src.js'
 
 describe('app-builder', () => {
-  let builder, spy1, spy2
+  let builder
 
   beforeEach(() => {
     builder = new AppBuilder
@@ -33,8 +33,8 @@ describe('app-builder', () => {
     })
   })
 
-  describe('AppFunc function', () => {
-    it('short circuit', async () => {
+  describe('composed function', () => {
+    it('can short circuit', async () => {
       let m = {count: 0}
       await builder.use(async (x) => {
         x.count++
@@ -44,25 +44,63 @@ describe('app-builder', () => {
       expect(m.count).to.equal(1)
     })
 
+    it('is an identity function', async () => {
+      const input = 'hey',
+        output = await compose([async (x, next) => {
+          await next()
+        }])(input)
+      expect(output).to.equal(input)
+    })
+
     it('works', async () => {
       let str = ''
-      await builder.use(async (x) => {
+      await builder.use(async (x, next) => {
         str += 1
-        await x.next()
+        await next()
         str += 3
-      }).use(async (x) => {
+      }).use(async (x, next) => {
         str += 2
       }).build()({})
       expect(str).to.equal('123')
     })
 
-    it(`sequential executions don't overwrite contexts`, async () => {
+    it('is valid middleware', async () => {
+      let str = ''
+      const appFn1 = builder.use(async (x, next) => {
+        str +=1
+        await next()
+        str +=3
+      }).build()
+
+      const appFn2 = appBuilder().use(async (x, next) => {
+        str += 2
+        await next()
+      }).build()
+      await appBuilder().use(appFn1).use(appFn2).build()()
+      expect(str).to.equal('123')
+    })
+
+    it('throws when next is invoked multiple times', async () => {
+      try {
+        await compose([
+          async (x, next) => {
+            await next()
+            await next()
+          }
+        ])()
+        throw 'failed'
+      } catch (error) {
+        expect(error.message).to.equal('Cannot call next more than once')
+      }
+    })
+
+    it('sequential executions get a new context', async () => {
       let count = 0;
       let firstArgThrough = false
-      const func = builder.use(async (x) => {
+      const func = builder.use(async (x, next) => {
         count++;
         await new Promise(setTimeout)
-        await x.next()
+        await next()
       }).use(async (x) => {
         if (x.num === 1) {
           firstArgThrough = true
