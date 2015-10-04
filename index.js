@@ -10,7 +10,7 @@ exports.compose = compose;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function throwIfCalled(fn) {
+function throwIfHasBeenCalled(fn) {
   if (fn._called) {
     throw new Error('Cannot call next more than once');
   }
@@ -35,7 +35,7 @@ function tryInvokeMiddleware(context, middleware, next) {
 function middlewareReducer(composed, mw) {
   return function (context, nextFn) {
     var next = function next() {
-      return throwIfCalled(next) && composed(context, nextFn);
+      return throwIfHasBeenCalled(next) && composed(context, nextFn);
     };
     return tryInvokeMiddleware(context, mw, next);
   };

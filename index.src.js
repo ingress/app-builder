@@ -1,5 +1,5 @@
 
-function throwIfCalled (fn) {
+function throwIfHasBeenCalled (fn) {
   if (fn._called) {
     throw new Error('Cannot call next more than once')
   }
@@ -25,7 +25,7 @@ function tryInvokeMiddleware(context, middleware, next) {
 
 function middlewareReducer (composed, mw) {
   return function (context, nextFn) {
-    const next = () => throwIfCalled(next) && composed(context, nextFn)
+    const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
     return tryInvokeMiddleware(context, mw, next)
   }
 }

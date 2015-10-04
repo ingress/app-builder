@@ -58,18 +58,17 @@ describe('app-builder', () => {
 
     it('is valid middleware', async () => {
       let str = ''
-      const appFn1 = builder.use(async (x, next) => {
-        str +=1
+      await compose([compose([async (x, next) => {
+        str += 1
         await next()
-        str +=3
-      }).build()
-
-      const appFn2 = appBuilder().use(async (x, next) => {
+        str += 4
+      }]), compose([async (x, next) => {
         str += 2
         await next()
-      }).build()
-      await appBuilder().use(appFn1).use(appFn2).build()()
-      expect(str).to.equal('123')
+      }]), () => {
+        str += 3
+      }])()
+      expect(str).to.equal('1234')
     })
 
     it('throws when next is invoked multiple times', async () => {
