@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "simple promise based middleware",
   "main": "index.js",
   "scripts": {

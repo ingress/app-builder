@@ -26,7 +26,9 @@ function tryInvokeMiddleware(context, middleware, next) {
 function middlewareReducer (composed, mw) {
   return function (context, nextFn) {
     const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
-    return tryInvokeMiddleware(context, mw, next)
+    return composed !== tryInvokeMiddleware
+      ? tryInvokeMiddleware(context, mw, next)
+      : tryInvokeMiddleware(context, mw, next).then(() => context)
   }
 }
 

@@ -37,7 +37,9 @@ function middlewareReducer(composed, mw) {
     var next = function next() {
       return throwIfHasBeenCalled(next) && composed(context, nextFn);
     };
-    return tryInvokeMiddleware(context, mw, next);
+    return composed !== tryInvokeMiddleware ? tryInvokeMiddleware(context, mw, next) : tryInvokeMiddleware(context, mw, next).then(function () {
+      return context;
+    });
   };
 }
 

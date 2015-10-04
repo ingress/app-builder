@@ -71,6 +71,15 @@ describe('app-builder', () => {
       expect(str).to.equal('1234')
     })
 
+    it('is an identity function', async () => {
+      const input = 'imateapot',
+        output = await compose([async (x, next) => {
+          await next()
+          return 42
+        }])(input)
+      expect(output).to.equal(input)
+    })
+
     it('throws when next is invoked multiple times', async () => {
       try {
         await compose([
