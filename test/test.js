@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import appBuilder, { compose, AppBuilder } from '../index.src.js'
+import Promise from 'bluebird'
 
 describe('app-builder', () => {
   let builder
@@ -73,9 +74,10 @@ describe('app-builder', () => {
 
     it('is an identity function', async () => {
       const input = 'imateapot',
-        output = await compose([async (x, next) => {
-          await next()
+        output = await compose([async () => {
           return 42
+        }, async (x, next) => {
+          await next()
         }])(input)
       expect(output).to.equal(input)
     })
