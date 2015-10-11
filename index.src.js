@@ -14,19 +14,21 @@ function throwIfNotFunction (x) {
 
 function tryInvokeMiddleware(context, middleware, next) {
   try {
-    return middleware
-      ? Promise.resolve(middleware(context, next))
-      : Promise.resolve(context)
+    return Promise.resolve(middleware(context, next))
   } catch(error) {
     return Promise.reject(error)
   }
 }
 
 function middlewareReducer (composed, mw) {
-  return function (context, nextFn, id = () => context) {
-    const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn, id)
-    return tryInvokeMiddleware(context, mw, next).then(id)
+  return function (context, nextFn, step = () => context) {
+    const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn, step)
+    return tryInvokeMiddleware(context, mw, next).then(step)
   }
+}
+
+function noop () {
+  return Promise.resolve()
 }
 
 /**
@@ -38,7 +40,11 @@ function middlewareReducer (composed, mw) {
 export function compose (...middleware) {
   return [].concat(...middleware)
     .filter(throwIfNotFunction)
-    .reduceRight(middlewareReducer, tryInvokeMiddleware)
+    .reduceRight(middlewareReducer, (context, next, step) => {
+      return next
+        ? Promise.resolve(next(context, noop, step))
+        : noop()
+    })
 }
 
 export default function () {

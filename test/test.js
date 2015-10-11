@@ -26,7 +26,7 @@ describe('app-builder', () => {
 
   describe('build', () => {
     it('throws when no mw are present', () => {
-      expect(builder.build.bind(builder)).to.throw(Error)
+      expect(() => builder.build()).to.throw(Error)
     })
     it('returns a function', () => {
       builder.use(() => void 0)
@@ -58,18 +58,25 @@ describe('app-builder', () => {
     })
 
     it('is valid middleware', async () => {
-      let str = ''
-      await compose([compose([async (x, next) => {
-        str += 1
+      const result = await compose([compose([
+      async (x, next) => {
+        x.str += 1
         await next()
-        str += 4
-      }]), compose([async (x, next) => {
-        str += 2
+        x.str += 5
+      }]), compose([
+      async (x, next) => {
+        x.str += 2
         await next()
-      }]), () => {
-        str += 3
-      }])()
-      expect(str).to.equal('1234')
+      }]),
+      async (x, next) => {
+        await next()
+        x.str += 4
+      }])({ str: ''},
+      async (x, next) => {
+        x.str += 3
+        await next()
+      })
+      expect(result.str).to.equal('12345')
     })
 
     it('is an identity function', async () => {
@@ -90,13 +97,13 @@ describe('app-builder', () => {
             await next()
           }
         ])()
-        throw 'failed'
+        throw new Error('failed')
       } catch (error) {
         expect(error.message).to.equal('Cannot call next more than once')
       }
     })
 
-    it('sequential executions get a new context', async () => {
+   it('sequential executions get a new context', async () => {
       let count = 0;
       let firstArgThrough = false
       const func = builder.use(async (x, next) => {

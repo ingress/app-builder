@@ -26,7 +26,7 @@ function throwIfNotFunction(x) {
 
 function tryInvokeMiddleware(context, middleware, next) {
   try {
-    return middleware ? Promise.resolve(middleware(context, next)) : Promise.resolve(context);
+    return Promise.resolve(middleware(context, next));
   } catch (error) {
     return Promise.reject(error);
   }
@@ -34,16 +34,20 @@ function tryInvokeMiddleware(context, middleware, next) {
 
 function middlewareReducer(composed, mw) {
   return function (context, nextFn) {
-    var id = arguments.length <= 2 || arguments[2] === undefined ? function () {
+    var step = arguments.length <= 2 || arguments[2] === undefined ? function () {
       return context;
     } : arguments[2];
     return (function () {
       var next = function next() {
-        return throwIfHasBeenCalled(next) && composed(context, nextFn, id);
+        return throwIfHasBeenCalled(next) && composed(context, nextFn, step);
       };
-      return tryInvokeMiddleware(context, mw, next).then(id);
+      return tryInvokeMiddleware(context, mw, next).then(step);
     })();
   };
+}
+
+function noop() {
+  return Promise.resolve();
 }
 
 /**
@@ -56,7 +60,9 @@ function middlewareReducer(composed, mw) {
 function compose() {
   var _ref;
 
-  return (_ref = []).concat.apply(_ref, arguments).filter(throwIfNotFunction).reduceRight(middlewareReducer, tryInvokeMiddleware);
+  return (_ref = []).concat.apply(_ref, arguments).filter(throwIfNotFunction).reduceRight(middlewareReducer, function (context, next, step) {
+    return next ? Promise.resolve(next(context, noop, step)) : noop();
+  });
 }
 
 exports['default'] = function () {
