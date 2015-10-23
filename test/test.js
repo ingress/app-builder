@@ -37,45 +37,59 @@ describe('app-builder', () => {
   describe('composed function', () => {
     it('can short circuit', async () => {
       let m = {count: 0}
-      await builder.use(async (x) => {
-        x.count++
-      }).use(async (x) => {
-        x.count++
-      }).build()(m)
+      await builder.use(
+        async (x) => {
+          x.count++
+        }
+      ).use(
+        async (x) => {
+          x.count++
+        }
+      ).build()(m)
       expect(m.count).to.equal(1)
     })
 
     it('works', async () => {
       let str = ''
-      await builder.use(async (x, next) => {
-        str += 1
-        await next()
-        str += 3
-      }).use(async (x, next) => {
-        str += 2
-      }).build()({})
+      await builder.use(
+        async (x, next) => {
+          str += 1
+          await next()
+          str += 3
+        }
+      ).use(
+        async (x, next) => {
+          await next()
+          str += 2
+        }
+      ).build()({})
       expect(str).to.equal('123')
     })
 
     it('is valid middleware', async () => {
-      const result = await compose([compose([
-      async (x, next) => {
-        x.str += 1
-        await next()
-        x.str += 5
-      }]), compose([
-      async (x, next) => {
-        x.str += 2
-        await next()
-      }]),
-      async (x, next) => {
-        await next()
-        x.str += 4
-      }])({ str: ''},
-      async (x, next) => {
-        x.str += 3
-        await next()
-      })
+      const result = await compose([
+        compose([
+        async (x, next) => {
+          x.str += 1
+          await next()
+          x.str += 5
+        }
+      ]),
+        compose([
+        async (x, next) => {
+          x.str += 2
+          await next()
+        }
+      ]),
+        async (x, next) => {
+          await next()
+          x.str += 4
+        }
+      ])({ str: ''},
+        async (x, next) => {
+          x.str += 3
+          await next()
+        })
       expect(result.str).to.equal('12345')
     })
 

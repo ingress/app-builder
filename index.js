@@ -24,12 +24,20 @@ function throwIfNotFunction(x) {
   return x;
 }
 
+function noop() {
+  return Promise.resolve();
+}
+
 function tryInvokeMiddleware(context, middleware, next) {
   try {
     return Promise.resolve(middleware(context, next));
   } catch (error) {
     return Promise.reject(error);
   }
+}
+
+function finalize(context, next, step) {
+  return next ? Promise.resolve(next(context, noop, step)) : noop();
 }
 
 function middlewareReducer(composed, mw) {
@@ -46,10 +54,6 @@ function middlewareReducer(composed, mw) {
   };
 }
 
-function noop() {
-  return Promise.resolve();
-}
-
 /**
  * Create a function to invoke all passed middleware functions
  * with a single argument and context
@@ -60,9 +64,7 @@ function noop() {
 function compose() {
   var _ref;
 
-  return (_ref = []).concat.apply(_ref, arguments).filter(throwIfNotFunction).reduceRight(middlewareReducer, function (context, next, step) {
-    return next ? Promise.resolve(next(context, noop, step)) : noop();
-  });
+  return (_ref = []).concat.apply(_ref, arguments).filter(throwIfNotFunction).reduceRight(middlewareReducer, finalize);
 }
 
 exports['default'] = function () {
