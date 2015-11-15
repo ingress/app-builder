@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import appBuilder, { compose, AppBuilder } from '../index.src.js'
+import appBuilder, { compose, AppBuilder } from '../src/app-builder'
 import Promise from 'bluebird'
 
 describe('app-builder', () => {
@@ -67,7 +67,8 @@ describe('app-builder', () => {
     })
 
     it('is valid middleware', async () => {
-      const result = await compose([
+      const context = { str: '' }
+      await compose([
         compose([
         async (x, next) => {
           x.str += 1
@@ -85,22 +86,12 @@ describe('app-builder', () => {
           await next()
           x.str += 4
         }
-      ])({ str: ''},
+      ])(context,
         async (x, next) => {
           x.str += 3
           await next()
         })
-      expect(result.str).to.equal('12345')
-    })
-
-    it('is an identity function', async () => {
-      const input = 'imateapot',
-        output = await compose([async () => {
-          return 42
-        }, async (x, next) => {
-          await next()
-        }])(input)
-      expect(output).to.equal(input)
+      expect(context.str).to.equal('12345')
     })
 
     it('throws when next is invoked multiple times', async () => {
@@ -116,27 +107,5 @@ describe('app-builder', () => {
         expect(error.message).to.equal('Cannot call next more than once')
       }
     })
-
-   it('sequential executions get a new context', async () => {
-      let count = 0;
-      let firstArgThrough = false
-      const func = builder.use(async (x, next) => {
-        count++;
-        await new Promise(setTimeout)
-        await next()
-      }).use(async (x) => {
-        if (x.num === 1) {
-          firstArgThrough = true
-        }
-        expect(count).to.equal(2)
-      }).build()
-
-      let res = func({num:1})
-      await func({num:2})
-      await res
-      expect(firstArgThrough).to.be.true
-    })
-
-
   })
 })

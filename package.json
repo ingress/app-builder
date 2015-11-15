@@ -1,14 +1,14 @@
 {
   "name": "app-builder",
-  "version": "4.1.2",
+  "version": "5.0.0",
   "description": "simple promise based middleware",
-  "main": "index.js",
+  "main": "lib/app-builder.js",
   "scripts": {
-    "prepublish": "babel index.src.js --out-file index.js --stage 1",
+    "prepublish": "babel src --out-dir lib",
     "test": "mocha --compilers js:babel/register"
   },
   "files": [
-    "index.js",
+    "lib",
     "LICENSE"
   ],
   "repository": {
