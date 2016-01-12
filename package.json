@@ -1,11 +1,13 @@
 {
   "name": "app-builder",
-  "version": "5.0.0",
-  "description": "simple promise based middleware",
+  "version": "5.0.1",
+  "description": "Simple, Composable, promise based middleware pipelines",
   "main": "lib/app-builder.js",
   "scripts": {
+    "coverage": "rimraf coverage && babel-node node_modules/isparta/bin/isparta cover --report text --report html node_modules/mocha/bin/_mocha",
+    "codecov": "npm run coverage && cat ./coverage/coverage.json | node node_modules/codecov.io/bin/codecov.io.js",
     "prepublish": "babel src --out-dir lib",
-    "test": "mocha --compilers js:babel/register"
+    "test": "mocha --compilers js:babel/register && npm run codecov"
   },
   "files": [
     "lib",
@@ -16,11 +18,12 @@
     "url": "https://github.com/calebboyd/app-builder.git"
   },
   "keywords": [
+    "middleware",
     "functional",
+    "composable",
     "composition",
     "pipeline",
     "async",
-    "middleware",
     "compose"
   ],
   "author": "Caleb Boyd (https://github.com/calebboyd)",
@@ -32,8 +35,10 @@
   "dependencies": {},
   "devDependencies": {
     "babel": "^5.8.23",
-    "bluebird": "^2.10.0",
     "chai": "^3.2.0",
-    "mocha": "^2.3.2"
+    "codecov.io": "^0.1.6",
+    "isparta": "^3.5.3",
+    "mocha": "^2.3.2",
+    "rimraf": "^2.5.0"
   }
 }

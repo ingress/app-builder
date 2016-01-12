@@ -1,8 +1,10 @@
 # app-builder
 
-Create a promise based middleware pipeline.
+Create composable promise based middleware pipelines.
 
 `npm install app-builder`
+
+[![circle-ci](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)](https://circleci.com/gh/calebboyd/app-builder.png?style=shield) [![codecov.io](https://codecov.io/github/calebboyd/app-builder/coverage.svg?branch=master)](https://codecov.io/github/calebboyd/app-builder?branch=master) 
 
 ## Example 
 
@@ -26,30 +28,58 @@ const context = { value: '' }
 app(context).then(() => console.log(context.value)) // --> '1234'
 ```
 
-##Exports
+## Exports (3)
 
-###default: createAppBuilder() : AppBuilder
+### default - createAppBuilder() : AppBuilder
 
-### compose(...Function[]) : AppFunc 
-compose functions together as middleware. 
+### compose - Function(...middleware[] : Function[]|Function) : Function
 
-### AppBuilder : class 
-its instances have the methods outlined below:
+### AppBuilder - Class
 
-#### AppBuilder#use(Function) : AppBuilder 
+--- 
 
-Adds a pipeline function to the builder. The function can accept two arguments,
-`context` and a `next` method The `next` method must be invoked to continue the pipeline. If
+#### AppBuilder#use(mw: Function) : AppBuilder
+
+Add a middleware function to the builder. A middleware function can accept two arguments;
+`context : any` and `next : Function`. `next` must be invoked to continue the pipeline. If
 the middleware function returns a promise the pipeline will end only after all
 returned promises have been resolved.
 
-#### AppBuilder#build : AppFunc
+#### AppBuilder#build() : Function
 
-Get a valid middleware function that executes all built middleware
+Get a function made up of all `use`d middleware functions (returned function is also valid middleware)
 
+
+#### AppBuilder Usage:
+
+```javascript
+import createAppBuilder from 'app-builder'
+
+const builder = createAppBuilder()
+
+async function first (context, next) {
+  context.value += 1
+  await next()
+  context.value += 4
+}
+
+async function second (context, next) {
+  context.value += 2
+  await next()
+  context.value += 3
+}
+
+builder.use(first)
+builder.use(second)
+
+applicationFunction = builder.build()
+
+const context = { value: '' }
+applicationFunction(context).then(() => console.log(context.value)) // --> '1234'
+```
 
 ## Notes
 
-- `next` must always have a modifier that is, it must always be `await`ed or `yield`ed or `return`ed.
+- `next()` must always have a modifier, that is, it must always be `await`ed or `yield`ed or `return`ed.
 If it isn't, there is a strong possibility you will encounter race conditions
  

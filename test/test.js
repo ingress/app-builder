@@ -22,6 +22,10 @@ describe('app-builder', () => {
       expect(builder.middleware[0]).to.equal(mw1)
       expect(builder.middleware[1]).to.equal(mw2)
     })
+
+    it('expects a function', () => {
+      expect(builder.use.bind(builder, {})).to.throw(Error)
+    })
   })
 
   describe('build', () => {
@@ -32,6 +36,11 @@ describe('app-builder', () => {
       builder.use(() => void 0)
       expect(builder.build()).to.be.a('function')
     })
+    it('throws when a middleware is not a function', () => {
+      builder.middleware.push({})
+      expect(builder.build.bind(builder)).to.throw(Error)
+    })
+
   })
 
   describe('composed function', () => {
@@ -106,6 +115,18 @@ describe('app-builder', () => {
       } catch (error) {
         expect(error.message).to.equal('Cannot call next more than once')
       }
+    })
+
+    it('propagates errors from middleware', async () => {
+      const someError = new Error(Math.random())
+      let didError = false
+      try {
+        await compose(() => { throw someError })()
+      } catch(error) {
+        didError = true
+        expect(error).to.equal(someError)
+      }
+      expect(didError).to.be.true
     })
   })
 })
