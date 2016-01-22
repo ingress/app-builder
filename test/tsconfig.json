@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",    
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "test/test.js",    
+    "sourceMap": true
+  },
+  "files": [
+    "typings/tsd.d.ts",
+    "test.ts"    
+  ]
+}

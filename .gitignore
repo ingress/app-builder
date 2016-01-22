@@ -1,5 +1,10 @@
 node_modules
 coverage
 lib
+typings
+test/typings
 .idea
+.vscode
 *.log
+*.js.map
+*.js

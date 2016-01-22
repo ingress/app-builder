@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5",    
+    "module": "umd",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outDir": "lib",
+    "sourceMap": true
+  },
+  "files": [
+    "typings/tsd.d.ts",
+    "src/app-builder.ts",
+    "src/compose.ts"
+  ]
+}

@@ -4,10 +4,9 @@
   "description": "Simple, Composable, promise based middleware pipelines",
   "main": "lib/app-builder.js",
   "scripts": {
-    "coverage": "rimraf coverage && babel-node node_modules/isparta/bin/isparta cover --report text --report html node_modules/mocha/bin/_mocha",
-    "codecov": "npm run coverage && cat ./coverage/coverage.json | node node_modules/codecov.io/bin/codecov.io.js",
-    "prepublish": "babel src --out-dir lib",
-    "test": "mocha --compilers js:babel/register && npm run codecov"
+    "prepublish": "tsd install && cd test && tsd install && tsc -p .",
+    "pretest": "tsc -p test",
+    "test": "mocha"
   },
   "files": [
     "lib",
@@ -34,11 +33,10 @@
   "homepage": "https://github.com/calebboyd/app-builder",
   "dependencies": {},
   "devDependencies": {
-    "babel": "^5.8.23",
     "chai": "^3.2.0",
-    "codecov.io": "^0.1.6",
-    "isparta": "^3.5.3",
     "mocha": "^2.3.2",
-    "rimraf": "^2.5.0"
+    "rimraf": "^2.5.0",
+    "tsd": "^0.6.5",
+    "typescript": "^1.7.5"
   }
 }
