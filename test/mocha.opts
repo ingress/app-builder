@@ -1,1 +1,5 @@
---compilers js:babel/register
+--check-leaks
+--compilers ts:ts-node/register
+--reporter progress
+--timeout 4000
+--recursive

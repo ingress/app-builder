@@ -1,18 +1,16 @@
-export interface NextFn {
-  (): any
-  _called?: Boolean
+export interface Middleware {
+  (context?: any, next?: Function) : Promise<any>
 }
 
-export interface MiddlewareFn {
-  (context: any, next: NextFn) : Promise<any>
+function noop () {
+  return Promise.resolve()
 }
 
-
-function throwIfHasBeenCalled (fn : NextFn) {
-  if (fn._called) {
+function throwIfHasBeenCalled (fn : Function) {
+  if ((<any>fn)._called) {
     throw new Error('Cannot call next more than once')
   }
-  return fn._called = true
+  return (<any>fn)._called = true
 }
 
 function throwIfNotFunction (x : any) {
@@ -22,7 +20,8 @@ function throwIfNotFunction (x : any) {
   return x
 }
 
-function tryInvokeMiddleware (context: any, middleware: MiddlewareFn, next: NextFn = () => Promise.resolve()) {
+function tryInvokeMiddleware (context: any, middleware: Middleware, next: Function) {
+  next = next || noop
   try {
     return middleware
       ? Promise.resolve(middleware(context, next))
@@ -32,9 +31,9 @@ function tryInvokeMiddleware (context: any, middleware: MiddlewareFn, next: Next
   }
 }
 
-function middlewareReducer (composed: MiddlewareFn, mw: MiddlewareFn): MiddlewareFn {
-  return function (context: any, nextFn: MiddlewareFn) {
-    const next: NextFn = () => throwIfHasBeenCalled(next) && composed(context, <NextFn>nextFn)
+function middlewareReducer (composed: Middleware, mw: Middleware): Middleware {
+  return function (context: any, nextFn: Middleware) {
+    const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
     return tryInvokeMiddleware(context, mw, next)
   }
 }
@@ -42,10 +41,10 @@ function middlewareReducer (composed: MiddlewareFn, mw: MiddlewareFn): Middlewar
 /**
  * Create a function to invoke all passed middleware functions
  * with a single argument and context
- * @param {...Array<Array<MiddlewareFn>|MiddlewareFn>} middleware, groups of middleware functions
- * @return {MiddlewareFn} fully qualified middleware
+ * @param {...Array<Array<Middleware>|Middleware>} middleware, groups of middleware functions
+ * @return {Middleware} a fully qualified middleware
  */
-export function compose (...middleware : Array<Array<MiddlewareFn>|MiddlewareFn>) {
+export function compose (...middleware: Array<Array<Middleware>|Middleware>): Middleware {
   return [].concat(...middleware)
     .filter(throwIfNotFunction)
     .reduceRight(middlewareReducer, tryInvokeMiddleware)

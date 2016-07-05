@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import appBuilder, { compose, AppBuilder } from '../src/app-builder'
+import appBuilder, { compose, AppBuilder } from '../lib/app-builder'
 
 describe('app-builder', () => {
   let builder: any
@@ -97,7 +97,7 @@ describe('app-builder', () => {
       ])(context,
         async (x: any, next: any) => {
           x.str += 3
-          await next()
+          return next()
         })
       expect(context.str).to.equal('12345')
     })
@@ -105,7 +105,7 @@ describe('app-builder', () => {
     it('throws when next is invoked multiple times', async () => {
       try {
         await compose([
-          async (x, next) => {
+          async (x: any, next: Function) => {
             await next()
             await next()
           }
@@ -118,11 +118,15 @@ describe('app-builder', () => {
 
     it('propagates errors from middleware', async () => {
       const someError = new Error(Math.random().toString())
+      function doThrow () {
+        throw someError
+      }
       let didError = false
       try {
-        await compose(() => { 
-          throw someError; 
-          return Promise.resolve() })()
+        await compose(() => {
+          doThrow()
+          return Promise.resolve();
+        })()
       } catch(error) {
         didError = true
         expect(error).to.equal(someError)

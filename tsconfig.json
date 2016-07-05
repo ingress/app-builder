@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",    
-    "module": "umd",
+    "target": "es5",
+    "module": "commonjs",
     "noImplicitAny": true,
     "removeComments": true,
-    "preserveConstEnums": true,
-    "outDir": "lib",
-    "sourceMap": true
+    "outDir": "lib"
   },
+  "compileOnSave": true,
   "files": [
-    "typings/tsd.d.ts",
+    "typings/index.d.ts",
     "src/app-builder.ts",
     "src/compose.ts"
   ]

@@ -4,9 +4,9 @@ Create composable promise based middleware pipelines.
 
 `npm install app-builder`
 
-[![circle-ci](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)](https://circleci.com/gh/calebboyd/app-builder.png?style=shield) [![codecov.io](https://codecov.io/github/calebboyd/app-builder/coverage.svg?branch=master)](https://codecov.io/github/calebboyd/app-builder?branch=master) 
+[![circle-ci](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)
 
-## Example 
+## Example
 
 ```javascript
 import { compose } from 'app-builder'
@@ -16,7 +16,7 @@ const app = compose([
     ctx.value += 1
     await next()
     ctx.value += 4
-  }, 
+  },
   async function (ctx, next) {
     ctx.value += 2
     await next()
@@ -36,7 +36,7 @@ app(context).then(() => console.log(context.value)) // --> '1234'
 
 ### AppBuilder - Class
 
---- 
+---
 
 #### AppBuilder#use(mw: Function) : AppBuilder
 
@@ -82,4 +82,4 @@ applicationFunction(context).then(() => console.log(context.value)) // --> '1234
 
 - `next()` must always have a modifier, that is, it must always be `await`ed or `yield`ed or `return`ed.
 If it isn't, there is a strong possibility you will encounter race conditions
- 
+

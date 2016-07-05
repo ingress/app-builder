@@ -1,16 +1,16 @@
 {
   "name": "app-builder",
-  "version": "5.0.1",
+  "version": "5.0.3",
   "description": "Simple, Composable, promise based middleware pipelines",
-  "main": "lib/app-builder.js",
+  "main": "./lib/app-builder.js",
+  "typings": "./lib/app-builder.d.ts",
   "scripts": {
-    "prepublish": "tsd install && cd test && tsd install && tsc -p .",
-    "pretest": "tsc -p test",
-    "test": "mocha"
+    "build": "tsc --declaration",
+    "prepublish": "npm test",
+    "test": "npm run build && cross-env TS_NODE_PROJECT=test mocha"
   },
   "files": [
-    "lib",
-    "LICENSE"
+    "lib"
   ],
   "repository": {
     "type": "git",
@@ -34,9 +34,10 @@
   "dependencies": {},
   "devDependencies": {
     "chai": "^3.2.0",
+    "cross-env": "^1.0.8",
     "mocha": "^2.3.2",
     "rimraf": "^2.5.0",
-    "tsd": "^0.6.5",
-    "typescript": "^1.7.5"
+    "ts-node": "^0.9.3",
+    "typescript": "^2.0.0-dev.20160705"
   }
 }
