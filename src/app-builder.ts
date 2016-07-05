@@ -24,5 +24,6 @@ export default function createAppBuilder () {
 }
 
 export {
-  compose
+  compose,
+  Middleware
 }
