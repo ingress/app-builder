@@ -95,7 +95,7 @@ describe('app-builder', () => {
           x.str += 4
         }
       ])(context,
-        async (x: any, next: any) => {
+        async (x: any, next: () => Promise<any>) => {
           x.str += 3
           return next()
         })

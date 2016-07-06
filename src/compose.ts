@@ -1,5 +1,5 @@
 export interface Middleware {
-  (context?: any, next?: Function) : Promise<any>
+  (context?: any, next?: Middleware) : Promise<any>
 }
 
 function noop () {
@@ -20,8 +20,7 @@ function throwIfNotFunction (x : any) {
   return x
 }
 
-function tryInvokeMiddleware (context: any, middleware: Middleware, next: Function) {
-  next = next || noop
+function tryInvokeMiddleware (context: any, middleware: Middleware, next: Middleware = noop) {
   try {
     return middleware
       ? Promise.resolve(middleware(context, next))
