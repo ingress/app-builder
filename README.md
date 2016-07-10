@@ -26,60 +26,28 @@ const app = compose([
 
 const context = { value: '' }
 app(context).then(() => console.log(context.value)) // --> '1234'
+
 ```
 
-## Exports (3)
+This module has the following TypeScript definition, containing 2 named exports and default factory export.
+As well as a Middleware interface definition
+```typescript
+declare module 'app-builder' {
 
-### default - createAppBuilder() : AppBuilder
+  export default function createAppBuilder<T>() : AppBuilder<T> 
 
-### compose - Function(...middleware[] : Function[]|Function) : Function
+  export class AppBuilder<T> {
+    use(middleware: Middleware<T>): AppBuilder<T>
+    build(): Middleware<T>
+  }
 
-### AppBuilder - Class
+  export function compose<T> (middleware: Array<Middleware<T>|Array<Middleware<T>>) : Middleware<T>
 
----
-
-#### AppBuilder#use(mw: Function) : AppBuilder
-
-Add a middleware function to the builder. A middleware function can accept two arguments;
-`context : any` and `next : Function`. `next` must be invoked to continue the pipeline. If
-the middleware function returns a promise the pipeline will end only after all
-returned promises have been resolved.
-
-#### AppBuilder#build() : Function
-
-Get a function made up of all `use`d middleware functions (returned function is also valid middleware)
-
-
-#### AppBuilder Usage:
-
-```javascript
-import createAppBuilder from 'app-builder'
-
-const builder = createAppBuilder()
-
-async function first (context, next) {
-  context.value += 1
-  await next()
-  context.value += 4
+  export interface Middleware<T> {
+    (context?: T, next?: Middleware<T>): Promise<any>
+  }
 }
-
-async function second (context, next) {
-  context.value += 2
-  await next()
-  context.value += 3
-}
-
-builder.use(first)
-builder.use(second)
-
-applicationFunction = builder.build()
-
-const context = { value: '' }
-applicationFunction(context).then(() => console.log(context.value)) // --> '1234'
 ```
 
-## Notes
 
-- `next()` must always have a modifier, that is, it must always be `await`ed or `yield`ed or `return`ed.
-If it isn't, there is a strong possibility you will encounter race conditions
 

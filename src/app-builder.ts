@@ -1,7 +1,7 @@
 import { compose, Middleware } from './compose'
 
-export class AppBuilder {
-  private middleware: Array<Middleware> = []
+export class AppBuilder<T> {
+  private middleware: Array<Middleware<T>> = []
 
   build () {
     if (!this.middleware.length) {
@@ -10,7 +10,7 @@ export class AppBuilder {
     return compose(this.middleware)
   }
 
-  use (mw: Middleware) {
+  use (mw: Middleware<T>) {
     if ('function' !== typeof mw) {
       throw new TypeError(`${mw}, middleware must be a function`)
     }
@@ -19,8 +19,8 @@ export class AppBuilder {
   }
 }
 
-export default function createAppBuilder () {
-  return new AppBuilder()
+export default function createAppBuilder<T> () {
+  return new AppBuilder<T>()
 }
 
 export {

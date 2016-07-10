@@ -77,14 +77,14 @@ describe('app-builder', () => {
     it('is valid middleware', async () => {
       const context = { str: '' }
       await compose([
-        compose([
+        compose<{ str: string }>([
         async (x, next) => {
           x.str += 1
           await next()
           x.str += 5
         }
       ]),
-        compose([
+        compose<{ str: string }>([
         async (x, next) => {
           x.str += 2
           await next()
@@ -95,7 +95,7 @@ describe('app-builder', () => {
           x.str += 4
         }
       ])(context,
-        async (x: any, next: () => Promise<any>) => {
+        async (x: { str: string }, next: () => Promise<any>) => {
           x.str += 3
           return next()
         })

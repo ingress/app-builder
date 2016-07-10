@@ -1,5 +1,5 @@
-export interface Middleware {
-  (context?: any, next?: Middleware) : Promise<any>
+export interface Middleware<T> {
+  (context?: T, next?: Middleware<T>) : Promise<any>
 }
 
 function noop () {
@@ -20,7 +20,7 @@ function throwIfNotFunction (x : any) {
   return x
 }
 
-function tryInvokeMiddleware (context: any, middleware: Middleware, next: Middleware = noop) {
+function tryInvokeMiddleware <T>(context: any, middleware: Middleware<T>, next: Middleware<T> = noop) {
   try {
     return middleware
       ? Promise.resolve(middleware(context, next))
@@ -30,8 +30,8 @@ function tryInvokeMiddleware (context: any, middleware: Middleware, next: Middle
   }
 }
 
-function middlewareReducer (composed: Middleware, mw: Middleware): Middleware {
-  return function (context: any, nextFn: Middleware) {
+function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Middleware<T> {
+  return function (context: any, nextFn: Middleware<T>) {
     const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
     return tryInvokeMiddleware(context, mw, next)
   }
@@ -43,7 +43,7 @@ function middlewareReducer (composed: Middleware, mw: Middleware): Middleware {
  * @param {...Array<Array<Middleware>|Middleware>} middleware, groups of middleware functions
  * @return {Middleware} a fully qualified middleware
  */
-export function compose (...middleware: Array<Array<Middleware>|Middleware>): Middleware {
+export function compose<T> (...middleware: Array<Array<Middleware<T>>|Middleware<T>>): Middleware<T> {
   return [].concat(...middleware)
     .filter(throwIfNotFunction)
     .reduceRight(middlewareReducer, tryInvokeMiddleware)
