@@ -1,5 +1,5 @@
 export interface Middleware<T> {
-  (context?: T, next?: Middleware<T>) : Promise<any>
+  (context?: T, next?: Middleware<T>) : any
 }
 
 function noop () {
