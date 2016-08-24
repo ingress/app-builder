@@ -90,7 +90,7 @@ describe('app-builder', () => {
           await next()
         }
       ]),
-        async (x, next) => {
+        async (x: { str: string }, next: () => Promise<any>) => {
           await next()
           x.str += 4
         }

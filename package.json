@@ -5,7 +5,7 @@
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
   "scripts": {
-    "build": "typings i && tsc --declaration",
+    "build": "tsc --declaration",
     "prepublish": "npm test",
     "test": "npm run build && cross-env TS_NODE_PROJECT=test mocha"
   },
@@ -33,12 +33,13 @@
   "homepage": "https://github.com/calebboyd/app-builder",
   "dependencies": {},
   "devDependencies": {
+    "@types/chai": "^3.4.31",
+    "@types/es6-promise": "0.0.30",
+    "@types/mocha": "^2.2.30",
     "chai": "^3.2.0",
     "cross-env": "^1.0.8",
     "mocha": "^2.3.2",
-    "rimraf": "^2.5.0",
     "ts-node": "^0.9.3",
-    "typescript": "^2.0.0-dev.20160707",
-    "typings": "^1.3.1"
+    "typescript": "^2.1.0-dev.20160823"
   }
 }

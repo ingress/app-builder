@@ -8,7 +8,6 @@
   },
   "compileOnSave": true,
   "files": [
-    "typings/index.d.ts",
     "src/app-builder.ts",
     "src/compose.ts"
   ]
