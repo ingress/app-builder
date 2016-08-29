@@ -6,11 +6,11 @@ function noop () {
   return Promise.resolve()
 }
 
-function throwIfHasBeenCalled (fn : Function) {
-  if ((<any>fn)._called) {
+function throwIfHasBeenCalled (fn : any) {
+  if (fn._called) {
     throw new Error('Cannot call next more than once')
   }
-  return (<any>fn)._called = true
+  return fn._called = true
 }
 
 function throwIfNotFunction (x : any) {
@@ -20,7 +20,7 @@ function throwIfNotFunction (x : any) {
   return x
 }
 
-function tryInvokeMiddleware <T>(context: any, middleware: Middleware<T>, next: Middleware<T> = noop) {
+function tryInvokeMiddleware <T>(context:T, middleware: Middleware<T>, next: Middleware<T> = noop) {
   try {
     return middleware
       ? Promise.resolve(middleware(context, next))
@@ -31,7 +31,7 @@ function tryInvokeMiddleware <T>(context: any, middleware: Middleware<T>, next: 
 }
 
 function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Middleware<T> {
-  return function (context: any, nextFn: Middleware<T>) {
+  return function (context: T, nextFn: Middleware<T>) {
     const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
     return tryInvokeMiddleware(context, mw, next)
   }
@@ -39,12 +39,12 @@ function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Midd
 
 /**
  * Create a function to invoke all passed middleware functions
- * with a single argument and context
- * @param {...Array<Array<Middleware>|Middleware>} middleware, groups of middleware functions
- * @return {Middleware} a fully qualified middleware
+ * with a single argument <T>context
+ * @param {...Array<Array<Middleware<T>>|Middleware<T>>} middleware, groups of middleware functions
+ * @return {Middleware<T>} a fully qualified middleware
  */
-export function compose<T> (...middleware: Array<Array<Middleware<T>>|Middleware<T>>): Middleware<T> {
-  return [].concat(...middleware)
+export function compose<T> (...middleware: Array<Array<Middleware<T>> | Middleware<T>>) {
+  return <Middleware<T>>[].concat(...middleware)
     .filter(throwIfNotFunction)
     .reduceRight(middlewareReducer, tryInvokeMiddleware)
 }

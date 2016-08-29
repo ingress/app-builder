@@ -7,8 +7,8 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "files": [
-    "../node_modules/@types/mocha/index.d.ts",
-    "test.ts"
+  "include": [
+    "../node_modules/@types/**/*",
+    "../test/**/*"
   ]
 }

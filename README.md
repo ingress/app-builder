@@ -44,10 +44,6 @@ declare module 'app-builder' {
   export function compose<T> (middleware: Array<Middleware<T>|Array<Middleware<T>>) : Middleware<T>
 
   export interface Middleware<T> {
-    (context?: T, next?: Middleware<T>): Promise<any>
-  }
+    (context?: T, next?: Middleware<T>): any
 }
 ```
-
-
-

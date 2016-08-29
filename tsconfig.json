@@ -7,8 +7,8 @@
     "outDir": "lib"
   },
   "compileOnSave": true,
-  "files": [
-    "src/app-builder.ts",
-    "src/compose.ts"
+  "include": [
+    "./src/**/*.ts",
+    "./node_modules/@types/**/*"
   ]
 }
