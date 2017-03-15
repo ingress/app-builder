@@ -1,4 +1,5 @@
 import { compose, Middleware } from './compose'
+import { PromiseConfig } from './promise'
 
 export class AppBuilder<T> {
   private middleware: Array<Middleware<T>> = []
@@ -25,5 +26,6 @@ export default function createAppBuilder<T> () {
 
 export {
   compose,
-  Middleware
+  Middleware,
+  PromiseConfig
 }

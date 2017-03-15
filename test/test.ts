@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import appBuilder, { compose, AppBuilder } from '../lib/app-builder'
+import appBuilder, { PromiseConfig, compose, AppBuilder } from '../lib/app-builder'
 
 describe('app-builder', () => {
   let builder: any

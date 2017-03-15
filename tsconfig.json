@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": ["es5", "es2015.promise"],
     "module": "commonjs",
     "noImplicitAny": true,
     "removeComments": true,
@@ -8,7 +9,6 @@
   },
   "compileOnSave": true,
   "include": [
-    "./src/**/*.ts",
-    "./node_modules/@types/**/*"
+    "./src/**/*.ts"
   ]
 }
