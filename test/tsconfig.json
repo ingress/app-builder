@@ -8,7 +8,6 @@
     "sourceMap": true
   },
   "include": [
-    "../node_modules/@types/**/*",
     "../test/**/*"
   ]
 }
