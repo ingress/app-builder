@@ -1,13 +1,13 @@
 {
   "name": "app-builder",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Simple, Composable, promise based middleware pipelines",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
   "scripts": {
     "build": "tsc --declaration",
     "prepublish": "npm test",
-    "test": "npm run build && cross-env TS_NODE_PROJECT=test TS_NODE_IGNORE_WARNINGS=2304 mocha"
+    "test": "npm run build && cross-env TS_NODE_PROJECT=test mocha"
   },
   "files": [
     "lib"
@@ -32,13 +32,13 @@
   },
   "homepage": "https://github.com/calebboyd/app-builder",
   "devDependencies": {
-    "@types/bluebird": "^3.5.0",
-    "@types/chai": "^3.4.35",
-    "@types/mocha": "^2.2.40",
-    "chai": "^3.2.0",
-    "cross-env": "^1.0.8",
-    "mocha": "^2.3.2",
-    "ts-node": "^0.9.3",
-    "typescript": "^2.2.1"
+    "@types/bluebird": "^3.5.18",
+    "@types/chai": "^4.0.5",
+    "@types/mocha": "^2.2.44",
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.1",
+    "mocha": "^4.0.1",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.1"
   }
 }

@@ -40,12 +40,12 @@ function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Midd
 }
 
 /**
+ *
  * Create a function to invoke all passed middleware functions
  * with a single argument <T>context
- * @param {...Array<Array<Middleware<T>>|Middleware<T>>} middleware, groups of middleware functions
- * @return {Middleware<T>} a fully qualified middleware
+ * @param middleware
  */
-export function compose<T> (...middleware: Array<Middleware<T> | Array<Middleware<T>>>) {
+export function compose<T> (...middleware: (Middleware<T> | Middleware<T>[])[]) {
   const mw: Middleware<T>[] = []
   return mw.concat(...middleware)
     .filter(throwIfNotFunction)
