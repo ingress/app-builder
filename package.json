@@ -1,16 +1,16 @@
 {
   "name": "app-builder",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Simple, Composable, promise based middleware pipelines",
-  "main": "./lib/app-builder.js",
-  "typings": "./lib/app-builder.d.ts",
+  "main": "lib/app-builder.js",
+  "typings": "lib/app-builder.d.ts",
   "scripts": {
     "build": "tsc --declaration",
     "prepublish": "npm test",
     "test": "npm run build && cross-env TS_NODE_PROJECT=test mocha"
   },
   "files": [
-    "lib"
+    "lib/**/*"
   ],
   "repository": {
     "type": "git",
