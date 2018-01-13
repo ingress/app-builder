@@ -1,4 +1,4 @@
-import { compose, Middleware } from './compose'
+import { compose, Middleware, ComposedMiddleware, Next } from './compose'
 import { PromiseConfig } from './promise'
 
 export class AppBuilder<T> {
@@ -27,5 +27,7 @@ export default function createAppBuilder<T> () {
 export {
   compose,
   Middleware,
+  Next,
+  ComposedMiddleware,
   PromiseConfig
 }

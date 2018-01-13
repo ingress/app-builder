@@ -1,7 +1,15 @@
 import { PromiseConfig } from './promise'
 
+export interface Next<T> {
+  (context?: T, next?: Next<T>) : Promise<any> | any
+}
+
+export interface ComposedMiddleware<T> {
+  (context: T, next?: Middleware<T>) : Promise<any> | any
+}
+
 export interface Middleware<T> {
-  (context?: T, next?: Middleware<T>) : any
+  (context: T, next: Next<T>) : Promise<any> | any
 }
 
 function noop () {
@@ -22,7 +30,7 @@ function throwIfNotFunction (x : any) {
   return x
 }
 
-function tryInvokeMiddleware <T>(context:T, middleware: Middleware<T>, next: Middleware<T> = noop) {
+function tryInvokeMiddleware <T>(context:T, middleware: Middleware<T>, next: Next<T> = noop) {
   try {
     return middleware
       ? PromiseConfig.constructor.resolve(middleware(context, next))
@@ -33,7 +41,7 @@ function tryInvokeMiddleware <T>(context:T, middleware: Middleware<T>, next: Mid
 }
 
 function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Middleware<T> {
-  return function (context: T, nextFn: Middleware<T>) {
+  return function (context: T, nextFn: Next<T> = noop) {
     const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
     return tryInvokeMiddleware(context, mw, next)
   }
@@ -46,9 +54,8 @@ function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Midd
  * @param middleware
  */
 export function compose<T> (...middleware: (Middleware<T> | Middleware<T>[])[]) {
-  const mw: Middleware<T>[] = []
-  return mw.concat(...middleware)
-    .filter(throwIfNotFunction)
+  const mw: ComposedMiddleware<T>[] = [].concat(...middleware)
+  return mw.filter(throwIfNotFunction)
     .reduceRight(middlewareReducer, tryInvokeMiddleware)
 }
 

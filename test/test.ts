@@ -109,7 +109,7 @@ describe('app-builder', () => {
             await next()
             await next()
           }
-        ])()
+        ])({})
         throw new Error('failed')
       } catch (error) {
         expect(error.message).to.equal('Cannot call next more than once')
@@ -126,7 +126,7 @@ describe('app-builder', () => {
         await compose(() => {
           doThrow()
           return Promise.resolve();
-        })()
+        })({})
       } catch(error) {
         didError = true
         expect(error).to.equal(someError)
