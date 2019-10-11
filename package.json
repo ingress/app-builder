@@ -1,17 +1,34 @@
 {
   "name": "app-builder",
-  "version": "5.2.0",
+  "version": "6.0.0",
   "description": "Simple, Composable, promise based middleware pipelines",
-  "main": "lib/app-builder.js",
-  "typings": "lib/app-builder.d.ts",
-  "scripts": {
-    "build": "tsc --declaration",
-    "prepublish": "npm test",
-    "test": "npm run build && cross-env TS_NODE_PROJECT=test mocha"
+  "main": "./lib/app-builder.js",
+  "typings": "./lib/app-builder.d.ts",
+  "author": "Caleb Boyd (https://github.com/calebboyd)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/calebboyd/app-builder/issues"
   },
+  "homepage": "https://github.com/calebboyd/app-builder",
   "files": [
-    "lib/**/*"
+    "lib",
+    "!**/*.spec.js"
   ],
+  "scripts": {
+    "lint": "eslint \"src/**/*\" --fix",
+    "build": "npm run lint && tsc",
+    "prepublish": "npm run test",
+    "watch:typescript": "tsc -w",
+    "watch:test": "jest --watchAll",
+    "dev": "npm run build && concurrently -k \"npm:watch:typescript\" \"npm:watch:test\" -c blue,green",
+    "test": "npm run build && jest --passWithNoTests"
+  },
+  "jest": {
+    "testRegex": ".*?(\\.spec).js",
+    "watchPathIgnorePatterns": [
+      "\\.ts$"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/calebboyd/app-builder.git"
@@ -25,20 +42,17 @@
     "async",
     "compose"
   ],
-  "author": "Caleb Boyd (https://github.com/calebboyd)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/calebboyd/app-builder/issues"
-  },
-  "homepage": "https://github.com/calebboyd/app-builder",
   "devDependencies": {
-    "@types/bluebird": "^3.5.18",
-    "@types/chai": "^4.0.5",
-    "@types/mocha": "^2.2.44",
-    "chai": "^4.1.2",
-    "cross-env": "^5.1.1",
-    "mocha": "^4.0.1",
-    "ts-node": "^4.1.0",
-    "typescript": "^2.6.2"
+    "@types/jest": "^24.0.18",
+    "@typescript-eslint/eslint-plugin": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.2",
+    "concurrently": "^5.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "~6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-watch": "^6.0.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.6.3"
   }
 }

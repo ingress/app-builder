@@ -1,62 +1,47 @@
-import { PromiseConfig } from './promise'
-
-export interface Next<T> {
-  (context?: T, next?: Next<T>) : Promise<any> | any
-}
-
-export interface ComposedMiddleware<T> {
-  (context: T, next?: Middleware<T>) : Promise<any> | any
-}
-
 export interface Middleware<T> {
-  (context: T, next: Next<T>) : Promise<any> | any
+  (context: T, next: ContinuationMiddleware<T>): any
+}
+export interface ContinuationMiddleware<T> {
+  (context?: T, next?: Middleware<T>): any
 }
 
-function noop () {
-  return PromiseConfig.constructor.resolve()
-}
+const flatten = <T>(values: Array<T | Array<T>>) => ([] as any).concat(...values) as T[],
+  noop = function noop() {
+    return Promise.resolve()
+  }
 
-function throwIfHasBeenCalled (fn : any) {
-  if (fn._called) {
+function throwIfHasBeenCalled(fn: any) {
+  if (fn.__appbuildercalled) {
     throw new Error('Cannot call next more than once')
   }
-  return fn._called = true
+  return (fn.__appbuildercalled = true)
 }
 
-function throwIfNotFunction (x : any) {
-  if ('function' !== typeof x) {
-    throw new TypeError(`${x}, middleware must be a function`)
-  }
-  return x
-}
-
-function tryInvokeMiddleware <T>(context:T, middleware: Middleware<T>, next: Next<T> = noop) {
+function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: ContinuationMiddleware<T> = noop) {
   try {
-    return middleware
-      ? PromiseConfig.constructor.resolve(middleware(context, next))
-      : PromiseConfig.constructor.resolve(context)
-  } catch(error) {
-    return PromiseConfig.constructor.reject(error)
-  }
-}
-
-function middlewareReducer<T> (composed: Middleware<T>, mw: Middleware<T>): Middleware<T> {
-  return function (context: T, nextFn: Next<T> = noop) {
-    const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
-    return tryInvokeMiddleware(context, mw, next)
+    return Promise.resolve(middleware ? middleware(context, next) : context)
+  } catch (error) {
+    return Promise.reject(error)
   }
 }
 
 /**
- *
  * Create a function to invoke all passed middleware functions
  * with a single argument <T>context
  * @param middleware
  */
-export function compose<T> (...middleware: (Middleware<T> | Middleware<T>[])[]) {
-  const mw: ComposedMiddleware<T>[] = [].concat(...middleware)
-  return mw.filter(throwIfNotFunction)
-    .reduceRight(middlewareReducer, tryInvokeMiddleware)
+export function compose<T = any>(...middleware: (Middleware<T> | Middleware<T>[])[]): ContinuationMiddleware<T> {
+  return flatten(middleware)
+    .filter(x => {
+      if ('function' !== typeof x) {
+        throw new TypeError(`${x}, must be a middleware function accpeting (context, next) arguments`)
+      }
+      return x
+    })
+    .reduceRight((composed: Middleware<T>, mw: Middleware<T>) => {
+      return function(context: T, nextFn: ContinuationMiddleware<T>) {
+        const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
+        return tryInvokeMiddleware(context, mw, next)
+      }
+    }, tryInvokeMiddleware) as ContinuationMiddleware<T>
 }
-
-
