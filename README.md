@@ -1,10 +1,12 @@
 # app-builder
 
+[![Actions Status](https://github.com/calebboyd/app-builder/workflows/app-builder-ci/badge.svg)](https://github.com/calebboyd/app-builder/actions)
+
 Create composable promise based middleware pipelines.
 
-`npm install app-builder`
+## Install:
 
-[![circle-ci](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)](https://circleci.com/gh/calebboyd/app-builder.png?style=shield)
+`npm install app-builder`
 
 ## Example
 
@@ -27,23 +29,4 @@ const app = compose([
 const context = { value: '' }
 app(context).then(() => console.log(context.value)) // --> '1234'
 
-```
-
-This module has the following TypeScript definition, containing 2 named exports and default factory export.
-As well as a Middleware interface definition
-```typescript
-declare module 'app-builder' {
-
-  export default function createAppBuilder<T>() : AppBuilder<T> 
-
-  export class AppBuilder<T> {
-    use(middleware: Middleware<T>): AppBuilder<T>
-    build(): Middleware<T>
-  }
-
-  export function compose<T> (middleware: Array<Middleware<T>|Array<Middleware<T>>) : Middleware<T>
-
-  export interface Middleware<T> {
-    (context?: T, next?: Middleware<T>): any
-}
 ```
