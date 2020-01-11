@@ -1,4 +1,4 @@
-import appBuilder, { compose, AppBuilder } from './app-builder'
+import appBuilder, { compose, AppBuilder, functionList } from './app-builder'
 
 describe('app-builder', () => {
   let builder: any
@@ -37,6 +37,23 @@ describe('app-builder', () => {
     it('throws when a middleware is not a function', () => {
       builder.middleware.push({})
       expect(builder.build.bind(builder)).toThrow(Error)
+    })
+  })
+
+  describe('funcitonList', () => {
+    it('should execute a list of provided functions in order', async () => {
+      const output = { str: '' }
+      await compose(
+        functionList([
+          () => (output.str += 1),
+          () => (output.str += 2),
+          async () => {
+            output.str += await Promise.resolve(3)
+          },
+          () => (output.str += 4)
+        ])
+      )()
+      expect(output.str).toEqual('1234')
     })
   })
 

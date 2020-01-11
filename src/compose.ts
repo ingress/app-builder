@@ -25,6 +25,13 @@ function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: Con
   }
 }
 
+export function functionList<T = any>(list: Function | Function[]): Middleware<T>[] {
+  const arrayList = Symbol.iterator in list ? Array.from(list as Function[]) : [list as Function]
+  return arrayList.map(x => {
+    return (_: any, next: any) => Promise.resolve(x()).then(next)
+  })
+}
+
 /**
  * Create a function to invoke all passed middleware functions
  * with a single argument <T>context

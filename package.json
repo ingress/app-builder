@@ -1,7 +1,7 @@
 {
   "name": "app-builder",
-  "version": "6.0.0",
-  "description": "Simple, Composable, promise based middleware pipelines",
+  "version": "6.1.0",
+  "description": "Simple, Composable, promise based composable functions",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
   "author": "Caleb Boyd (https://github.com/calebboyd)",
@@ -20,7 +20,7 @@
     "prepublish": "npm run test",
     "watch:typescript": "tsc -w",
     "watch:test": "jest --watchAll",
-    "dev": "npm run build && concurrently -k \"npm:watch:typescript\" \"npm:watch:test\" -c blue,green",
+    "watch": "npm run build && concurrently -k \"npm:watch:typescript\" \"npm:watch:test\" -c blue,green",
     "test": "npm run build && jest --passWithNoTests"
   },
   "jest": {

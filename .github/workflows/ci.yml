@@ -1,0 +1,25 @@
+
+name: app-builder-ci
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3537747
+      - name: cache-depepndencies
+        id: cache-npm
+        uses: actions/cache@cffae95
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node-modules-${{ hashFiles('package-lock.json') }}
+      - name: install-dependencies
+        run: |
+          npm i
+      - name: build
+        run: |
+          npm run build
+      - name: test
+        run: |
+          npm run test
