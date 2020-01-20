@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "Simple, Composable, promise based composable functions",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",

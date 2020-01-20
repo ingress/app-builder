@@ -25,10 +25,10 @@ function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: Con
   }
 }
 
-export function functionList<T = any>(list: Function | Function[]): Middleware<T>[] {
+export function functionList<T = any>(list: Function | Function[], ...args: any[]): Middleware<T>[] {
   const arrayList = Symbol.iterator in list ? Array.from(list as Function[]) : [list as Function]
   return arrayList.map(x => {
-    return (_: any, next: any) => Promise.resolve(x()).then(next)
+    return (_: any, next: any) => Promise.resolve(x(...args)).then(next)
   })
 }
 
