@@ -1,7 +1,7 @@
 {
   "name": "app-builder",
-  "version": "6.2.1",
-  "description": "Simple, Composable, promise based composable functions",
+  "version": "6.2.2",
+  "description": "Promise based composable functions for middleware",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
   "author": "Caleb Boyd (https://github.com/calebboyd)",
@@ -73,20 +73,21 @@
     "composable",
     "composition",
     "pipeline",
+    "onion",
     "async",
     "compose"
   ],
   "devDependencies": {
-    "@types/jest": "^25.1.4",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
-    "@typescript-eslint/parser": "^2.23.0",
+    "@types/jest": "^25.2.1",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "~6.10.0",
-    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-config-prettier": "~6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
     "eslint-watch": "^6.0.1",
-    "jest": "^25.1.0",
-    "prettier": "^1.19.1",
+    "jest": "^25.4.0",
+    "prettier": "^2.0.5",
     "typescript": "^3.8.3"
   }
 }

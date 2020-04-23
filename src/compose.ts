@@ -27,7 +27,7 @@ function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: Con
 
 export function functionList<T = any>(list: Function | Function[], ...args: any[]): Middleware<T>[] {
   const arrayList = Symbol.iterator in list ? Array.from(list as Function[]) : [list as Function]
-  return arrayList.map(x => {
+  return arrayList.map((x) => {
     return (_: any, next: any) => Promise.resolve(x(...args)).then(next)
   })
 }
@@ -39,14 +39,14 @@ export function functionList<T = any>(list: Function | Function[], ...args: any[
  */
 export function compose<T = any>(...middleware: (Middleware<T> | Middleware<T>[])[]): ContinuationMiddleware<T> {
   return flatten(middleware)
-    .filter(x => {
+    .filter((x) => {
       if ('function' !== typeof x) {
         throw new TypeError(`${x}, must be a middleware function accpeting (context, next) arguments`)
       }
       return x
     })
     .reduceRight((composed: Middleware<T>, mw: Middleware<T>) => {
-      return function(context: T, nextFn: ContinuationMiddleware<T>) {
+      return function (context: T, nextFn: ContinuationMiddleware<T>) {
         const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
         return tryInvokeMiddleware(context, mw, next)
       }

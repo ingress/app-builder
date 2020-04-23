@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/calebboyd/app-builder/workflows/app-builder-ci/badge.svg)](https://github.com/calebboyd/app-builder/actions)
 
-Create composable promise based middleware pipelines.
+Create composable promise based middleware pipelines, using the "onion" middleware model.
 
 ## Install:
 
@@ -29,4 +29,17 @@ const app = compose([
 const context = { value: '' }
 app(context).then(() => console.log(context.value)) // --> '1234'
 
+```
+
+All composed functions are also valid middleware functions.
+
+```javascript
+const superApp = compose(
+  async function (ctx, next) {
+    ctx.value += 'first'
+    await next()
+    ctx.value += 'last'
+  },
+  app
+)
 ```

@@ -50,7 +50,7 @@ describe('app-builder', () => {
           async () => {
             output.str += await Promise.resolve(3)
           },
-          () => (output.str += 4)
+          () => (output.str += 4),
         ])
       )()
       expect(output.str).toEqual('1234')
@@ -91,16 +91,16 @@ describe('app-builder', () => {
       const context = { str: '' }
 
       const func = compose<typeof context>([
-        async function(ctx, next) {
+        async function (ctx, next) {
           ctx.str += 1
           await next()
           ctx.str += 5
         },
-        async function(ctx, next) {
+        async function (ctx, next) {
           ctx.str += 2
           await next()
           ctx.str += 4
-        }
+        },
       ])
 
       await func(context, (ctx, next) => {
