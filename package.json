@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "6.2.2",
+  "version": "6.3.0",
   "description": "Promise based composable functions for middleware",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
@@ -33,7 +33,7 @@
     "parser": "typescript",
     "semi": false,
     "singleQuote": true,
-    "printWidth": 120
+    "printWidth": 100
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
@@ -78,16 +78,16 @@
     "compose"
   ],
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.29.0",
-    "@typescript-eslint/parser": "^2.29.0",
-    "concurrently": "^5.1.0",
-    "eslint": "^6.8.0",
+    "@types/jest": "^26.0.7",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
+    "concurrently": "^5.2.0",
+    "eslint": "^7.5.0",
     "eslint-config-prettier": "~6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
-    "eslint-watch": "^6.0.1",
-    "jest": "^25.4.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-watch": "^7.0.0",
+    "jest": "^26.1.0",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   }
 }

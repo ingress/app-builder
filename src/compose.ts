@@ -4,6 +4,7 @@ export interface Middleware<T> {
 export interface ContinuationMiddleware<T> {
   (context?: T, next?: Middleware<T>): any
 }
+export type Func<T = any> = (...args: any[]) => T
 
 const flatten = <T>(values: Array<T | Array<T>>) => ([] as any).concat(...values) as T[],
   noop = function noop() {
@@ -17,7 +18,11 @@ function throwIfHasBeenCalled(fn: any) {
   return (fn.__appbuildercalled = true)
 }
 
-function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: ContinuationMiddleware<T> = noop) {
+function tryInvokeMiddleware<T>(
+  context: T,
+  middleware: Middleware<T>,
+  next: ContinuationMiddleware<T> = noop
+) {
   try {
     return Promise.resolve(middleware ? middleware(context, next) : context)
   } catch (error) {
@@ -25,8 +30,8 @@ function tryInvokeMiddleware<T>(context: T, middleware: Middleware<T>, next: Con
   }
 }
 
-export function functionList<T = any>(list: Function | Function[], ...args: any[]): Middleware<T>[] {
-  const arrayList = Symbol.iterator in list ? Array.from(list as Function[]) : [list as Function]
+export function functionList<T = any>(list: Func | Func[], ...args: any[]): Middleware<T>[] {
+  const arrayList = Symbol.iterator in list ? Array.from(list as Func[]) : [list as Func]
   return arrayList.map((x) => {
     return (_: any, next: any) => Promise.resolve(x(...args)).then(next)
   })
@@ -37,11 +42,15 @@ export function functionList<T = any>(list: Function | Function[], ...args: any[
  * with a single argument <T>context
  * @param middleware
  */
-export function compose<T = any>(...middleware: (Middleware<T> | Middleware<T>[])[]): ContinuationMiddleware<T> {
+export function compose<T = any>(
+  ...middleware: (Middleware<T> | Middleware<T>[])[]
+): ContinuationMiddleware<T> {
   return flatten(middleware)
     .filter((x) => {
       if ('function' !== typeof x) {
-        throw new TypeError(`${x}, must be a middleware function accpeting (context, next) arguments`)
+        throw new TypeError(
+          `${x}, must be a middleware function accpeting (context, next) arguments`
+        )
       }
       return x
     })
