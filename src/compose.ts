@@ -11,30 +11,41 @@ const flatten = <T>(values: Array<T | Array<T>>) => ([] as any).concat(...values
     return Promise.resolve()
   }
 
-function throwIfHasBeenCalled(fn: any) {
-  if (fn.__appbuildercalled) {
-    throw new Error('Cannot call next more than once')
-  }
-  return (fn.__appbuildercalled = true)
-}
-
-function tryInvokeMiddleware<T>(
-  context: T,
-  middleware: Middleware<T>,
-  next: ContinuationMiddleware<T> = noop
-) {
-  try {
-    return Promise.resolve(middleware ? middleware(context, next) : context)
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
-
-export function functionList<T = any>(list: Func | Func[], ...args: any[]): Middleware<T>[] {
+export function functionList<T = any>(
+  list: Func | Iterable<Func>,
+  ...args: any[]
+): Middleware<T>[] {
   const arrayList = Symbol.iterator in list ? Array.from(list as Func[]) : [list as Func]
   return arrayList.map((x) => {
     return (_: any, next: any) => Promise.resolve(x(...args)).then(next)
   })
+}
+
+const kHasBeenCalled = Symbol('has-been-called')
+class Executor<T = any> {
+  constructor(private mw: Middleware<T>, private continuation: ContinuationMiddleware<T>) {}
+  tryInvokeMiddleware<T>(
+    context: T,
+    middleware: Middleware<T>,
+    next: ContinuationMiddleware<T> = noop
+  ) {
+    try {
+      const resolved = middleware ? middleware(context, next) : context
+      return Promise.resolve(resolved)
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+  checkNext(next: Func & { [kHasBeenCalled]?: boolean }) {
+    if (next[kHasBeenCalled]) throw new Error('Cannot call next more than once')
+    return (next[kHasBeenCalled] = true)
+  }
+  get middleware() {
+    return (context: T, nextFn: ContinuationMiddleware<T>) => {
+      const next = () => this.checkNext(next) && this.continuation(context, nextFn)
+      return this.tryInvokeMiddleware(context, this.mw, next)
+    }
+  }
 }
 
 /**
@@ -49,15 +60,12 @@ export function compose<T = any>(
     .filter((x) => {
       if ('function' !== typeof x) {
         throw new TypeError(
-          `${x}, must be a middleware function accpeting (context, next) arguments`
+          `${x}, must be a middleware function accepting (context, next) arguments`
         )
       }
-      return x
+      return x as any
     })
-    .reduceRight((composed: Middleware<T>, mw: Middleware<T>) => {
-      return function (context: T, nextFn: ContinuationMiddleware<T>) {
-        const next = () => throwIfHasBeenCalled(next) && composed(context, nextFn)
-        return tryInvokeMiddleware(context, mw, next)
-      }
-    }, tryInvokeMiddleware) as ContinuationMiddleware<T>
+    .reduceRight((composed: ContinuationMiddleware<T>, mw: Middleware<T>) => {
+      return new Executor<T>(mw, composed).middleware as ContinuationMiddleware<T>
+    }, Executor.prototype.tryInvokeMiddleware as ContinuationMiddleware<T>)
 }
