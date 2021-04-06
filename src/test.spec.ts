@@ -87,6 +87,20 @@ describe('app-builder', () => {
       expect(str).toEqual('123')
     })
 
+    it('can run concurrently', async () => {
+      let first = true
+      const composed = await builder
+        .use(async (x: any, next: any) => {
+          if (first) {
+            first = false
+            await new Promise((resolve) => setTimeout(resolve, 5))
+          }
+          await next()
+        })
+        .build()
+      await Promise.all([composed(), composed()])
+    })
+
     it('is valid middleware', async () => {
       const context = { str: '' }
 
