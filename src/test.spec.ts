@@ -125,18 +125,6 @@ describe('app-builder', () => {
       expect(context.str).toEqual('12345')
     })
 
-    it('throws when next is invoked multiple times', async () => {
-      try {
-        await compose(async (x, next) => {
-          await next()
-          await next()
-        })()
-        throw new Error('failed')
-      } catch (error) {
-        expect(error.message).toEqual('Cannot call next more than once')
-      }
-    })
-
     it('propagates errors from middleware', async () => {
       const someError = new Error(Math.random().toString())
       function doThrow() {

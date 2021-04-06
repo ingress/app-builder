@@ -15,7 +15,7 @@
     "!**/*.spec.js"
   ],
   "scripts": {
-    "bench": "benchmartian bench.js",
+    "bench": "node bench.js",
     "lint": "eslint \"src/**/*\" --fix",
     "build": "npm run lint && tsc",
     "prepublish": "npm run test",
@@ -84,7 +84,7 @@
     "@types/jest": "^26.0.22",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
-    "benchmartian": "^0.0.2",
+    "benchmark": "^2.1.4",
     "concurrently": "^6.0.1",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "~8.1.0",
