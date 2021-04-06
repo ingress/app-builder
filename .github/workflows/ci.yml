@@ -5,21 +5,10 @@ on: [push]
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3537747
-      - name: cache-depepndencies
-        id: cache-npm
-        uses: actions/cache@cffae95
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-node-modules-${{ hashFiles('package-lock.json') }}
-      - name: install-dependencies
-        run: |
-          npm i
-      - name: build
-        run: |
-          npm run build
-      - name: test
-        run: |
-          npm run test
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - name: Install, build and test
+        run: npm i && node bench.js

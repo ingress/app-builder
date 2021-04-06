@@ -1,21 +1,21 @@
 {
   "name": "app-builder",
-  "version": "6.3.0",
+  "version": "7.0.0",
   "description": "Promise based composable functions for middleware",
   "main": "./lib/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
   "author": "Caleb Boyd (https://github.com/calebboyd)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/calebboyd/app-builder/issues"
+    "url": "https://github.com/ingress/app-builder/issues"
   },
-  "homepage": "https://github.com/calebboyd/app-builder",
+  "homepage": "https://github.com/ingress/app-builder",
   "files": [
     "lib",
     "!**/*.spec.js"
   ],
   "scripts": {
-    "bench": "benchmartian bench.js",
+    "bench": "node bench.js",
     "lint": "eslint \"src/**/*\" --fix",
     "build": "npm run lint && tsc",
     "prepublish": "npm run test",
@@ -84,14 +84,14 @@
     "@types/jest": "^26.0.22",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
-    "benchmartian": "^0.0.2",
+    "benchmark": "^2.1.4",
     "concurrently": "^6.0.1",
-    "eslint": "^7.23.0",
+    "eslint": "^7.24.0",
     "eslint-config-prettier": "~8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-watch": "^7.0.0",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.4"
   }
 }

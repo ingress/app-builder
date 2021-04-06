@@ -21,7 +21,6 @@ export function functionList<T = any>(
   })
 }
 
-const kHasBeenCalled = Symbol('has-been-called')
 class Executor<T = any> {
   constructor(private mw: Middleware<T>, private continuation: ContinuationMiddleware<T>) {}
   tryInvokeMiddleware<T>(
@@ -36,14 +35,9 @@ class Executor<T = any> {
       return Promise.reject(error)
     }
   }
-  checkNext(next: Func & { [kHasBeenCalled]?: boolean }) {
-    if (next[kHasBeenCalled]) throw new Error('Cannot call next more than once')
-    return (next[kHasBeenCalled] = true)
-  }
   get middleware() {
-    return (context: T, nextFn: ContinuationMiddleware<T>) => {
-      const next = () => this.checkNext(next) && this.continuation(context, nextFn)
-      return this.tryInvokeMiddleware(context, this.mw, next)
+    return (context: T, next: ContinuationMiddleware<T>) => {
+      return this.tryInvokeMiddleware(context, this.mw, this.continuation.bind(null, context, next))
     }
   }
 }
