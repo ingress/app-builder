@@ -2,16 +2,14 @@
   "compilerOptions": {
     "target": "es2018",
     "declaration": true,
-    "module": "commonjs",
+    "module": "es2015",
     "skipLibCheck": true,
-    "lib": ["dom", "es2018"],
-    "outDir": "lib",
+    "lib": ["es2018"],
+    "outDir": "lib/esm",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "inlineSourceMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*.ts"]

@@ -1,4 +1,4 @@
-import { compose, Middleware, ContinuationMiddleware, functionList } from './compose'
+import { compose, Middleware, ContinuationMiddleware, functionList } from './compose.js'
 
 export class AppBuilder<T = any> {
   private middleware: Array<Middleware<T>> = []

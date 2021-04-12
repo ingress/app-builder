@@ -1,6 +1,7 @@
-const Benchmark = require('benchmark');
-const suite = new Benchmark.Suite();
-const { compose } = require('.')
+import benchmark from 'benchmark'
+import { compose } from './lib/esm/app-builder.js'
+
+const suite = new benchmark.Suite();
 
 const mw = [(context, next) => Promise.resolve(next())]
 let count = 49

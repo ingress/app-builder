@@ -2,8 +2,18 @@
   "name": "app-builder",
   "version": "7.0.0",
   "description": "Promise based composable functions for middleware",
-  "main": "./lib/app-builder.js",
+  "main": "./lib/cjs/app-builder.js",
   "typings": "./lib/app-builder.d.ts",
+  "type": "module",
+  "exports": {
+    "./": {
+      "node": {
+        "import": "./lib/esm/app-builder.js"
+      },
+      "default": "./lib/cjs/app-builder.js"
+    },
+    "./package.json": "./package.json"
+  },
   "author": "Caleb Boyd (https://github.com/calebboyd)",
   "license": "MIT",
   "bugs": {
@@ -17,7 +27,8 @@
   "scripts": {
     "bench": "node bench.js",
     "lint": "eslint \"src/**/*\" --fix",
-    "build": "npm run lint && tsc",
+    "build": "npm run lint && npm run compile",
+    "compile": "tsc -b tsconfig.cjs.json tsconfig.json && echo '{\"type\": \"commonjs\"}' > lib/cjs/package.json",
     "prepublish": "npm run test",
     "watch:typescript": "tsc -w",
     "watch:test": "jest --watchAll",
@@ -25,7 +36,7 @@
     "test": "npm run build && jest --passWithNoTests"
   },
   "jest": {
-    "testRegex": ".*?(\\.spec).js",
+    "testRegex": ".*?cjs.*(\\.spec).js",
     "watchPathIgnorePatterns": [
       "\\.ts$"
     ]
