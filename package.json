@@ -3,7 +3,7 @@
   "version": "7.0.0",
   "description": "Promise based composable functions for middleware",
   "main": "./lib/cjs/app-builder.js",
-  "typings": "./lib/app-builder.d.ts",
+  "typings": "./lib/cjs/app-builder.d.ts",
   "type": "module",
   "exports": {
     "./": {
@@ -92,17 +92,17 @@
     "compose"
   ],
   "devDependencies": {
-    "@types/jest": "^26.0.22",
-    "@typescript-eslint/eslint-plugin": "^4.21.0",
-    "@typescript-eslint/parser": "^4.21.0",
+    "@types/jest": "^26.0.23",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
     "benchmark": "^2.1.4",
-    "concurrently": "^6.0.1",
-    "eslint": "^7.24.0",
-    "eslint-config-prettier": "~8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
+    "concurrently": "^6.2.0",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "~8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-watch": "^7.0.0",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
+    "jest": "^27.0.1",
+    "prettier": "^2.3.0",
     "typescript": "^4.2.4"
   }
 }
