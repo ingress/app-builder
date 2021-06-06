@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Promise based composable functions for middleware",
   "main": "./lib/cjs/app-builder.js",
   "typings": "./lib/cjs/app-builder.d.ts",

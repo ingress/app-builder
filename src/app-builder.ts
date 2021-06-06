@@ -3,7 +3,7 @@ import { compose, Middleware, ContinuationMiddleware, functionList } from './com
 export class AppBuilder<T = any> {
   private middleware: Array<Middleware<T>> = []
 
-  build(): Middleware<T> {
+  build(): ContinuationMiddleware<T> {
     if (!this.middleware.length) {
       throw new Error('Usage error: must have at least one middleware')
     }
