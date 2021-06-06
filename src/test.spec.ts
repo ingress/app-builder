@@ -1,4 +1,9 @@
-import appBuilder, { compose, AppBuilder, functionList } from './app-builder'
+import appBuilder, {
+  compose,
+  AppBuilder,
+  functionList,
+  ContinuationMiddleware,
+} from './app-builder'
 
 describe('app-builder', () => {
   let builder: any
@@ -32,6 +37,8 @@ describe('app-builder', () => {
     })
     it('returns a function', () => {
       builder.use(() => Promise.resolve())
+      const built: ContinuationMiddleware<any> = builder.build()
+      void built
       expect(typeof builder.build()).toEqual('function')
     })
     it('throws when a middleware is not a function', () => {
