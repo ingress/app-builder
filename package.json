@@ -1,6 +1,6 @@
 {
   "name": "app-builder",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "description": "Promise based composable functions for middleware",
   "main": "./lib/cjs/app-builder.js",
   "typings": "./lib/cjs/app-builder.d.ts",
@@ -8,7 +8,8 @@
   "exports": {
     "./": {
       "node": {
-        "import": "./lib/esm/app-builder.js"
+        "import": "./lib/esm/app-builder.js",
+        "require": "./lib/cjs/app-builder.js"
       },
       "default": "./lib/cjs/app-builder.js"
     },
